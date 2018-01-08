@@ -262,14 +262,38 @@ class: center, middle
 Allowing clients to make arbitrary network calls is dangerous because
 of the potential to use your server to launch another attack on a site.
 
-Disabling docker network access is a different process--I will be demonstrating
-it on a simple docker daemon. There are different solutions for clustered docker setups
-like Kubernetes or Elastic Container Service.
+Disabling your application from having network access is a different process
+depending on your setup. I'll demonstrate doing this using `iptables` on a standalone docker host.
+
+For docker setups involving multiple hosts, there are different solutions.
 
 ![Right-aligned image](unplugged_ethernet.jpg)
 ]
 
 .right-column[.footnote[[Photo Credit](https://c1.staticflickr.com/7/6196/6088751332_7da4134066_b.jpg)]]
+---
+.left-column[
+ ## Network Access
+ ### - Disabling External Network Access
+ ### - iptables
+]
+
+# iptables
+
+`iptables` is a powerful firewall tool on Linux for managing inbound and
+outbound traffic. For docker setups running on a single box, it's the simplest
+way to set up rules.
+
+This rule:
+
+```
+sudo iptables -A FORWARD -i docker0 -j DROP
+```
+
+drops any packets originating from the "docker" network interface.
+
+`iptables` can be complicated to use, but this is a simple enough rule.
+
 ---
 class: center, middle
 ## Process Permissions
@@ -359,6 +383,8 @@ Process.setrlimit(Process::RLIMIT_NPROC, 5)
 * [Does GNU/Linux counts processes and threads together when I limit their number?  ](https://superuser.com/questions/376532/does-gnu-linux-counts-processes-and-threads-together-when-i-limit-their-number )
 * [limits.conf documentation](https://linux.die.net/man/5/limits.conf)
 * [More details on rlimits](https://www.systutorials.com/docs/linux/man/2-setrlimit/#lbAE)
+* [Networking Docker Containers - Mesosphere](https://mesosphere.com/blog/networking-docker-containers/)
+* [A Deep Dive into Iptables and Netfilter Architecture](https://www.digitalocean.com/community/tutorials/a-deep-dive-into-iptables-and-netfilter-architecture)
 ---
 # Questions?
 
