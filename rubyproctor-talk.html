@@ -246,14 +246,6 @@ that mounts the root filesystem as read-only.
 This prevents any attacker from modifying any files on the file system at all, preventing attacks involving corrupting data
 ]
 ---
-
-
-.left-column[
-  ## Protecting the filesystem
-  ### - Use docker
-  ### - Set the filesystem to be read-only
-]
----
 class: center, middle
 ## Network Access
 ---
@@ -270,214 +262,113 @@ class: center, middle
 Allowing clients to make arbitrary network calls is dangerous because
 of the potential to use your server to launch another attack on a site.
 
-Disabling docker 
+Disabling docker network access is a different process--I will be demonstrating
+it on a simple docker daemon. There are different solutions for clustered docker setups
+like Kubernetes or Elastic Container Service.
 
 ![Right-aligned image](unplugged_ethernet.jpg)
 ]
+
+.right-column[.footnote[[Photo Credit](https://c1.staticflickr.com/7/6196/6088751332_7da4134066_b.jpg)]]
 ---
 class: center, middle
 ## Process Permissions
 ---
 .left-column[
- ## Process Permissions 
+ ## Process Permissions
  ### - rlimits
 ]
 
 .right-column[
  # rlimits
-]
----
-template: inverse
 
-## Of course, Markdown can only go so far.
+ Linux has a handy way of setting kernel-enforced resource limits
+ on individual processes.
+
+ See the full list [here](https://www.systutorials.com/docs/linux/man/2-setrlimit/#lbAE).
+
+ The two relevant ones to this project are `RLIMIT_NPROC` and `RLIMIT_CPU`.
+
+ These regulate
+ the number of processes that a process is allowed to create and the amount of CPU time a
+ process is allowed to use respectively.
+
+]
 ---
 .left-column[
-  ## Markdown extensions
+## Process Permissions
+### - rlimits
+### - Setting rlimits in Ruby
 ]
+
 .right-column[
-To help out with slide layout and formatting, a few Markdown extensions have been included:
+# Setting rlimits in Ruby
 
-- Slide properties, for naming, styling and templating slides
+Setting `rlimits` on proceses in Ruby is simply a matter of
+passing arguments to `Process.spawn`.
 
-- Content classes, for styling specific content
-
-- Syntax highlighting, supporting a range of languages
-]
-
----
-.left-column[
-  ## Markdown extensions
-  ### - Slide properties
-]
-.right-column[
-Initial lines containing key-value pairs are extracted as slide properties:
-
-```remark
-name: agenda
-class: middle, center
-
-# Agenda
-
-The name of this slide is {{ name }}.
+```ruby
+Process.spawn(
+  "ruby runner.rb #{arg}",
+  rlimit_nproc: [2,2],
+  rlimit_cpu: [2,2]
+)
 ```
 
-Slide properties serve multiple purposes:
-
-* Naming and styling slides using properties `name` and `class`
-
-* Using slides as templates using properties `template` and `layout`
-
-* Expansion of `{{ property }}` expressions to property values
-
-See the [complete list](https://github.com/gnab/remark/wiki/Markdown#slide-properties) of slide properties.
+Other libraries for running shell commands, such as `Open3`, typically wrap `Process.spawn`
+and also support these arguments.
 ]
 ---
 .left-column[
-  ## Markdown extensions
-  ### - Slide properties
-  ### - Content classes
+## Process Permissions
+### - rlimits
+### - Setting rlimits in Ruby
+### - How ironclad are these limits?
 ]
-.right-column[
-Any occurences of one or more dotted CSS class names followed by square brackets are replaced with the contents of the brackets with the specified classes applied:
 
-```remark
-.footnote[.red.bold[*] Important footnote]
+.right-column[
+# How ironclad are these limits?
+
+`rlimits` are enforced by the Linux kernel, and
+once set on a process by a parent process, cannot be changed.
+
+To demonstrate:
+
+```ruby
+# parent_script.rb
+Process.spawn(
+  "ruby child_script.rb",
+  rlimit_nproc: [2,2],
+)
 ```
 
-Resulting HTML extract:
+```ruby
+# child_script.rb
+Process.setrlimit(Process::RLIMIT_NPROC, 5)
 
-```xml
-<span class="footnote">
-  <span class="red bold">*</span> Important footnote
-</span>
+# raises Operation not permitted - setrlimit (Errno::EPERM)
 ```
 ]
 ---
-.left-column[
-  ## Markdown extensions
-  ### - Slide properties
-  ### - Content classes
-  ### - Syntax Highlighting
-]
-.right-column[
-Code blocks can be syntax highlighted by specifying a language from the set of [supported languages](https://github.com/gnab/remark/wiki/Configuration#highlighting).
+# Further Reading
 
-Using [GFM](http://github.github.com/github-flavored-markdown/) fenced code blocks you can easily specify highlighting language:
-
-.pull-left[
-
-<pre><code>```javascript
-function add(a, b)
-  return a + b
-end
-```</code></pre>
-]
-.pull-right[
-
-<pre><code>```ruby
-def add(a, b)
-  a + b
-end
-```</code></pre>
-]
-
-A number of highlighting [styles](https://github.com/gnab/remark/wiki/Configuration#highlighting) are available, including several well-known themes from different editors and IDEs.
-
-]
+* [RubyProctor](https://rubyproctor.com)
+* [Rubocop Documentation](http://rubocop.readthedocs.io/en/latest/)
+* [Docker Storage, Image, and Containers](https://docs.docker.com/engine/userguide/storagedriver/imagesandcontainers/#sharing-promotes-smaller-images)
+* [Docker Container Networking ](https://docs.docker.com/engine/userguide/networking/#default-networks)
+* [Does GNU/Linux counts processes and threads together when I limit their number?  ](https://superuser.com/questions/376532/does-gnu-linux-counts-processes-and-threads-together-when-i-limit-their-number )
+* [limits.conf documentation](https://linux.die.net/man/5/limits.conf)
+* [More details on rlimits](https://www.systutorials.com/docs/linux/man/2-setrlimit/#lbAE)
 ---
-.left-column[
-  ## Presenter mode
-]
-.right-column[
-To help out with giving presentations, a presenter mode comprising the
-following features is provided:
+# Questions?
 
-- Display of slide notes for the current slide, to help you remember
-  key points
+Again, I'm Sid Shanker.
 
-- Display of upcoming slide, to let you know what's coming
+**Email:** sid.p.shanker@gmail.com
 
-- Cloning of slideshow for viewing on extended display
-]
----
-.left-column[
-  ## Presenter mode
-  ### - Inline notes
-]
-.right-column[
-Just like three dashes separate slides,
-three question marks separate slide content from slide notes:
+**Twitter:** [@sidpshanker](https://twitter.com/sidpshanker)
 
-```
-Slide 1 content
-
-*???
-
-Slide 1 notes
-
----
-
-Slide 2 content
-
-*???
-
-Slide 2 notes
-```
-
-Slide notes are also treated as Markdown, and will be converted in the
-same manner slide content is.
-
-Pressing __P__ will toggle presenter mode.
-]
-???
-Congratulations, you just toggled presenter mode!
-
-Now press __P__ to toggle it back off.
----
-.left-column[
-  ## Presenter mode
-  ### - Inline notes
-  ### - Cloned view
-]
-.right-column[
-Presenter mode of course makes no sense to the audience.
-
-Creating a cloned view of your slideshow lets you:
-
-- Move the cloned view to the extended display visible to the audience
-
-- Put the original slideshow in presenter mode
-
-- Navigate as usual, and the cloned view will automatically keep up with the original
-
-Pressing __C__ will open a cloned view of the current slideshow in a new
-browser window.
-]
----
-template: inverse
-
-## It's time to get started!
----
-.left-column[
-  ## Getting started
-]
-.right-column[
-Getting up and running is done in only a few steps:
-
-1. Visit the [project site](http://github.com/gnab/remark)
-
-2. Follow the steps in the Getting Started section
-
-For more information on using remark, please check out the [wiki](https://github.com/gnab/remark/wiki) pages.
-]
----
-name: last-page
-template: inverse
-
-## That's all folks (for now)!
-
-Slideshow created using [remark](http://github.com/gnab/remark).
-class: center, middle
+**Github:** [@squidarth](https://github.com/squidarth)
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js">
     </script>
