@@ -1,0 +1,23 @@
+
+# Running User-Provided Code
+
+### Sid Shanker - Fog City Ruby 01/09/2018
+
+---
+
+# What I'll be covering
+
+1. Motivations: Rubocop and Rubyproctor
+2. Running user-provided code safely
+
+---
+
+# Why use Rubocop?
+
+.left[
+* Saves time in code review (no need to deal with nits)
+* Educates developers
+* Reduces # of bike-shedding arguments
+]
+.left[![Right-aligned image](rubocop_logo.png)]
+
