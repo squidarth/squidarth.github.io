@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Title</title>
+    <title>Running user-provided code</title>
     <meta charset="utf-8">
     <style>
       @import url(https://fonts.googleapis.com/css?family=Droid+Serif);
@@ -286,6 +286,10 @@ drops any packets originating from the "docker" network interface.
 
 ---
 class: center, middle
+![Right-aligned image](hotel_california.jpg)
+.footnote[[Image Credit](http://cdn.ipernity.com/143/09/47/33140947.863d9992.500.jpg?r2)]
+---
+class: center, middle
 ## Process Permissions
 ---
 .left-column[
@@ -300,7 +304,7 @@ class: center, middle
    running `eval` in the webserver code, so that an attacker
    can't modify the webserver.
 
-   ```
+   ```ruby
    # In the webserver code
 
    Process.spawn("ruby runner.rb '#{code}' '#{rule}'")
