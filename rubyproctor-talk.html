@@ -47,13 +47,6 @@
       .pull-right ~ p {
         clear: both;
       }
-      #slideshow .slide .content code {
-        font-size: 0.8em;
-      }
-      #slideshow .slide .content pre code {
-        font-size: 0.9em;
-        padding: 15px;
-      }
       .inverse {
         background: #272822;
         color: #777872;
@@ -64,43 +57,8 @@
         line-height: 0.8em;
       }
 
-      /* Slide-specific styling */
-      #slide-inverse .footnote {
-        bottom: 12px;
-        left: 20px;
-      }
-      #slide-how .slides {
-        font-size: 0.9em;
-        position: absolute;
-        top:  151px;
-        right: 140px;
-      }
-      #slide-how .slides h3 {
-        margin-top: 0.2em;
-      }
-      #slide-how .slides .first, #slide-how .slides .second {
-        padding: 1px 20px;
-        height: 90px;
-        width: 120px;
-        -moz-box-shadow: 0 0 10px #777;
-        -webkit-box-shadow: 0 0 10px #777;
-        box-shadow: 0 0 10px #777;
-      }
-      #slide-how .slides .first {
-        background: #fff;
-        position: absolute;
-        top: 20%;
-        left: 20%;
-        z-index: 1;
-      }
-      #slide-how .slides .second {
-        position: relative;
-        background: #fff;
-        z-index: 0;
-      }
       /* Two-column layout even */
       .left-column-even {
-        color: #777;
         width: 50%;
         height: 92%;
         float: left;
@@ -108,7 +66,6 @@
       .right-column-even {
         width: 50%;
         float: right;
-        padding-top: 1em;
       }
 
       /* Two-column layout */
@@ -126,6 +83,10 @@
         float: right;
         padding-top: 1em;
       }
+      .padding-right {
+
+        padding-right: 1.25em;
+      }
     </style>
   </head>
   <body>
@@ -139,10 +100,35 @@ class: center, middle, inverse
 Sid Shanker - Fog City Ruby 01-09-2018
 ---
 layout: false
-## What I'll be covering
 
-1. Motivations: Rubocop and Rubyproctor
-2. Running user-provided code safely
+# Hi, I'm Sid!
+
+.left-column-even[I'm a software engineer at [Fin](https://fin.com), and have been working in Ruby on and off for ~5 years
+
+**Email:** sid.p.shanker@gmail.com
+
+**Twitter:** [@sidpshanker](https://twitter.com/sidpshanker)
+
+**Github:** [@squidarth](https://github.com/squidarth)
+]
+.right-column-even[
+  .right[.padding-right[![Right-aligned image](sid_as_jenkins.JPG)]]
+  .red[Me dressed as my favorite CI system]
+]
+
+---
+## RubyProctor
+
+.left-column-even[
+  ### What is it?
+
+  RubyProctor is a simple website for rapidly developing RuboCop rules.
+
+  It provides the Ruby AST of some example code, and as you type, evaluates the rule you have provided.
+]
+.right-column-even[
+  ![Right-aligned image](rubyproctor_ss.png)
+]
 ---
 layout: false
 
@@ -183,35 +169,23 @@ Style/AlignHash:
 Rubocop also allows you to write your own rules. However, writing these custom rules
 can be somewhat annoying to do.
 ---
-
-## Enter: RubyProctor
-
-.left-column-even[
-  ### What is it?
-
-  RubyProctor is a simple website for rapidly developing RuboCop rules.
-
-  It provides the Ruby AST of some example code, and as you type, evaluates the rule you have provided.
-
-  [Demo](https://rubyproctor.com)
-]
-.right-column-even[
-  ![Right-aligned image](rubyproctor_ss.png)
-]
+class: center, middle
+# [Ruby Proctor Demo](http://rubyproctor.com)
 ---
 class: center, middle
 ![Right-aligned image](danger_gif.gif)
 ---
-## What could *possibly* go wrong?
-
-Someone could:
-
-* Turn rubyproctor into a miner for the latest hip alt-coin
-* Start a DDoS attack against another website
-* Fork a bunch of processes and crash the server
-.left-column-even[
-  ![Right-aligned image](rfrfstar.png)
-]
+class: center, middle
+# Someone could mine some hip cryptocurrency 
+![Right-aligned image](cryptos.jpg)
+---
+class: center, middle
+# Someone could DDoS your favorite website
+![Right-aligned image](github_unicorn.png)
+---
+class: center, middle
+# Or, more benevolently, just crash your server
+![Right-aligned image](plane_crash.jpg)
 ---
 class: center, middle
 ## Protect the filesystem
@@ -223,11 +197,10 @@ class: center, middle
 .right-column[
 # Use Docker
 
-Docker is a system that allows developers to run applications in "containers", that are
-much more lightweight than VMs, but are still isolated from the the machine they are running on.
+* Docker is a system that allows developers to run applications in "containers".
+* You can think of containers as "mini-OSs" that run on a host OS
+* They are quick to start, so if something goes wrong, you can start over easily
 
-They are also isolated from each other, so if an attacker *did* manage to modify files in the container,
-you can always just destroy it and start a new one.
 
 ![Right-aligned image](docker_logo.png)
 ]
@@ -246,6 +219,23 @@ that mounts the root filesystem as read-only.
 This prevents any attacker from modifying any files on the file system at all, preventing attacks involving corrupting data
 ]
 ---
+.left-column[
+  ## Protecting the filesystem
+### - Use Docker
+### - Set the filesystem to read-only
+### - How Docker's Filesystem Works
+]
+.right-column[
+# How Docker's Filesystem Works
+
+* Docker containers are created from **images**
+* Docker containers use a layered filesystem
+* It uses "copy-on-write" to make changes to files
+* This means that everything in the Docker container has a "read-only" version
+
+.center[![Right-aligned image](docker_containers.png)]
+]
+---
 class: center, middle
 ## Network Access
 ---
@@ -260,12 +250,9 @@ class: center, middle
 # Disabling Network Access
 
 Allowing clients to make arbitrary network calls is dangerous because
-of the potential to use your server to launch another attack on a site.
+of the potential to use your server to launch an attack on another site.
 
-Disabling your application from having network access is a different process
-depending on your setup. I'll demonstrate doing this using `iptables` on a standalone docker host.
-
-For docker setups involving multiple hosts, there are different solutions.
+I'll demonstrate disallowing networking calls doing this using `iptables` Linux tool.
 
 ![Right-aligned image](unplugged_ethernet.jpg)
 ]
@@ -300,6 +287,31 @@ class: center, middle
 ---
 .left-column[
  ## Process Permissions
+ ### - Running External Code in a Separate Process
+]
+
+.right-column[
+   # Running External Code in a Separate Process
+
+   In RubyProctor, I make sure not to execute the rule by
+   running `eval` in the webserver code, so that an attacker
+   can't modify the webserver.
+
+   ```
+   # In the webserver code
+
+   Process.spawn("ruby runner.rb '#{code}' '#{rule}'")
+   ```
+
+   Other possible risks:
+
+   * The user could include an infinite loop
+   * The user could spin off a bunch of other processes
+]
+---
+.left-column[
+ ## Process Permissions
+ ### - Running External Code in a Separate Process
  ### - rlimits
 ]
 
@@ -321,6 +333,7 @@ class: center, middle
 ---
 .left-column[
 ## Process Permissions
+### - Running External Code in a Separate Process
 ### - rlimits
 ### - Setting rlimits in Ruby
 ]
@@ -339,8 +352,8 @@ Process.spawn(
 )
 ```
 
-Other libraries for running shell commands, such as `Open3`, typically wrap `Process.spawn`
-and also support these arguments.
+Other libraries for running shell commands, such as `Open3`, also support
+these arguments.
 ]
 ---
 .left-column[
@@ -376,7 +389,7 @@ Process.setrlimit(Process::RLIMIT_NPROC, 5)
 ---
 # Further Reading
 
-* [RubyProctor](https://rubyproctor.com)
+* [RubyProctor](http://rubyproctor.com)
 * [Rubocop Documentation](http://rubocop.readthedocs.io/en/latest/)
 * [Docker Storage, Image, and Containers](https://docs.docker.com/engine/userguide/storagedriver/imagesandcontainers/#sharing-promotes-smaller-images)
 * [Docker Container Networking ](https://docs.docker.com/engine/userguide/networking/#default-networks)
