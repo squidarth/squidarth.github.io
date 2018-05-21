@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+  {% include head.html %}
+
+  <body>
+    <div>
+      <header class="clearfix">
+        <div class="right absolute-lg right-0 top-0">
+          <ul class="mt-2 mr-2 mr-lg-3">
+            {% for my_page in site.pages %}
+              {% if my_page.title %}
+              <li class="inline-block block-lg text-right ml-1 ml-lg-0">
+                <a class="italic no-underline h4 font-smoothing" href="{{ my_page.url | prepend: site.baseurl }}">{{ my_page.title }}</a>
+              </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div class="container mx-auto px-2 clearfix header-text">
+          <h1 class="h0 inline-block py-2 header-title">{{ site.title }}</h1>
+          <div class="h4 lh-condensed font-smoothing">
+            <p>I'm a programmer living in San Francisco. Currently working on building a digital personal assistant @ <a href="https://fin.com" >fin<a/>. Formerly of <a href="https://counsyl.com">Counsyl</a> and <a href="https://gumroad.com">Gumroad</a>. Love developer tools, Ruby, and tennis.</p>
+            <br /> 
+            <p>Follow me on <a href="https://twitter.com/sidpshanker">Twitter</a>, check out my projects on <a href="https://github.com/squidarth">Github</a>, and read my blog posts on <a href="https://medium.com/@squidarth">Medium</a>.</p>
+          </div>
+
+
+        </div>
+      </header>
+      <div class="container mx-auto px-2" >
+       <h2>Side Projects</h2>
+       <ul>
+         <li><a href="http://rubyproctor.com">Ruby Proctor</a>, a site for editing RuboCop rules</li>
+         <li><a href="https://github.com/squidarth/tuxedo">Tuxedo</a>, a language for configuring Jenkins instances
+       </ul>
+       <h2>Talks</h2>
+       <ul>
+         <li><a href="http://squidarth.github.io/running-user-code">Running User Code</a>   Fog City Ruby / Jan 9, 2018
+       </ul/>
+       <h2>Blog Posts</h2>
+       <ul>
+        {% for post in site.posts %}
+          {% include post_block.html %}
+        {% endfor %}
+
+         <li><a href="https://medium.com/@squidarth/my-first-haskell-program-part-1-e4cc0530553e">My First Haskell Program</a> / Apr 14, 2018</li>
+         <li><a href="https://www.fin.com/post/2018/3/type-variance-and-interfaces-in-flow-js">Type Variance and Interfaces in Flow.js</a> / March 28, 2018</li>
+         <li><a href="https://medium.com/@squidarth/a-better-copy-paste-flow-for-tmux-on-macos-5284f82571a2">A better copy/paste flow for tmux on macOS</a> / Jan 28, 2018</li>
+         <li><a href="https://blog.fin.com/migrations-and-long-transactions-in-postgres-e6c3fbae56a5">Migrations and Long Transactions in Postgres</a> / Jan 12, 2018</li>
+         <li><a href="https://blog.fin.com/autoscaling-jenkins-on-ec2-d96e7b3b72e">Autoscaling Jenkins on EC2</a> / Nov 17, 2017</li>
+         <li><a  href="https://medium.com/@squidarth/running-user-provided-code-6c87b94720a3">Running user provided code</a> / Nov 17, 2017</li>
+       </ul>
+      </div>
+    </div>
+
+    {% include footer.html %}
+
+  </body>
+
+</html>
