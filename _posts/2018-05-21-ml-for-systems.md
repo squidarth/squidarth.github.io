@@ -74,11 +74,11 @@ search around the prediction given by the machine learning algorithm.
 
 # Model Selection & Performance
 
-Ok, so theoretically, it seems like replacing B-Trees with some machine learning model should be possibe. The next challenge, then
+Ok, so theoretically, it seems like replacing B-Trees with some machine learning model should be possible. The next challenge, then
 is figuring out exactly what model to use. This involves weighing the tradeoffs of particular methods and understanding the
 performance of various models. Important factors to understand here are that if the model returns an inaccurate result, cost will be
 incurred dong a search to find the actual value, and that a model that is slower to execute but returns a more accurate result
-might actually be fasture because of the lower local search cost.
+might actually be faster because of the lower local search cost.
 
 What Dean and the other researchers ended up choosing was a "Recursive Model Index", in which many models are trained on
 subsets of the full data set. A higher level model is run first, and selects one or more of the models trained on a subset
