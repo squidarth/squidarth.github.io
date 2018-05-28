@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Machine Learning for Systems: An Intro"
-date:   2018-05-15 23:04:38 -0600
+date:   2018-05-22 23:04:38 -0600
 categories: machine-learning systems rc
 ---
 
