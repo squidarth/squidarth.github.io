@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Using Linux Raw Sockets"
-date:   2018-05-23 14:04:38 -0400
+date:   2018-05-28 14:04:38 -0400
 categories: networking systems rc
 ---
 
