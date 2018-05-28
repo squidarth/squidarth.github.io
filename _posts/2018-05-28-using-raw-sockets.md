@@ -6,46 +6,27 @@ categories: networking systems rc
 ---
 
 In an effort to learn how TCP/IP works, I decided to start playing around with
-a low-level TCP/IP library, [smoltcp](https://github.com/m-labs/smoltcp). Since it is
-a standalone networking stack and needs to send/receive raw packets, it needs to be
-run as the root user.
+a low-level TCP/IP library, [smoltcp](https://github.com/m-labs/smoltcp). Some of
+the examples (particularly, the clone of `tcpdump`) require using raw sockets,
+which need to be run as the root user. Running network programs as root is pretty
+dangerous, and is something that one should probably never do.
 
-To skip ahead, the [github page](https://github.com/m-labs/smoltcp) provides some shell
-commands that can be used to allow programs using smoltcp to run as non-root users. Without
-further ado, here they are:
-
-To create a "tap interface" (more on this later):
-
-```bash
-sudo ip tuntap add name tap0 mode tap user $USER
-sudo ip link set tap0 up
-sudo ip addr add 192.168.69.100/24 dev tap0 # 192.168.69.100/24 this is a private IP address that refers to the range 192.168.69.*
-sudo ip -6 addr add fe80::100/64 dev tap0
-sudo ip -6 addr add fdaa::100/64 dev tap0
-sudo ip -6 route add fe80::/64 dev tap0
-sudo ip -6 route add fdaa::/64 dev tap0
-```
-
-And to connect to the internet:
-
-```bash
-sudo iptables -t nat -A POSTROUTING -s 192.168.69.0/24 -j MASQUERADE
-sudo sysctl net.ipv4.ip_forward=1
-```
-
-In this post I'll be digging into what exactly all these commands do. While the library
-I'm working with is written in Rust, I'll use examples using C.
+In this post, I'll be discussing how to use raw sockets without having to run the
+whole program as root. And while the library I'm working with is written in Rust,
+I'll be using examples written in C.
 
 # Why does it mean to access a raw socket?
 
-Sockets are the Linux way for computers to talk to the internet.
+Sockets are the means by which programs on Linux way talk to the internet.
 The [`socket` system call](http://man7.org/linux/man-pages/man7/socket.7.html)
-creates a file descriptor that can be written to and read from. Writing to the
-socket sends data to the remote address, while reading from the socket file
+creates a file descriptor that can be written to and read from. The [`connect` system call](http://man7.org/linux/man-pages/man2/connect.2.html)
+can then be used to connect the socket to some remote address.
+After that, writing to the
+socket sends data to that remote address, while reading from the socket file
 descriptor reads data sent from the remote address.
 
-There are two main types of sockets, streaming sockets, and datagram sockets.
-I won't get into the details of these now, but streaming sockets are for applications
+There are two main types of sockets, stream sockets, and datagram sockets.
+I won't get into the details of these now, but streaming sockets are used for applications
 that use TCP, while datagram sockets are for applications that use UDP. These are both
 transport-level protocols that follow the network-level IP protocol.
 
@@ -66,8 +47,8 @@ information stored in TCP and UDP headers:
 For instance, the destination port is stored in the TCP headers. This means that packets
 read from raw sockets don't have any notion of "port".
 
-To step back a little bit, an application using TCP or UDP must, when opening up a STREAM or DATAGRAM socket, must declare a port to receive data on.  When the application reads data from that
-socket, they  will only see data that was sent to that particular port.
+To step back a little bit, an application using TCP or UDP must, when opening up a STREAM or DGRAM socket, must declare a port to receive data on.  When the application reads data from that
+socket, they will only see data that was sent to that particular port.
 
 Now, with raw sockets, because network-level IP packets do not have a notion of "port", all
 packets coming in over the server's network device can be read. Applications that open raw sockets
@@ -79,7 +60,7 @@ the raw socket open.
 
 To prevent this from happening, Linux requires that any program that accesses raw sockets be
 run as root. Actually running network programs as root is dangerous, especially for a sufficiently
-complicated program like a TCP implementation.
+complicated program, like a TCP implementation.
 
 In this post I'll cover a couple different strategies for circumventing this.
 
@@ -176,10 +157,10 @@ New Packet:
 
 This is very clearly not ideal. With root access, programs can
 do some serious damage to the system, and with a sufficiently
-complicated network program, the chances of something going wrong,
-like a code injection bug go up.
+complicated network program, the chances of something going wrong
+and pretty high.
 
-## Linux Capabilities
+## The solution: Linux Capabilities
 
 Thankfully, programs don't have to be run with full root access in order
 to be able to use raw sockets. Linux has a feature called [_capabilities_](http://man7.org/linux/man-pages/man7/capabilities.7.html).
@@ -205,40 +186,15 @@ a.out = cap_net_admin,cap_net_raw+eip
 Setting capabilities on executables allows you to run these programs
 without having to run the risk of these being run as root.
 
-There are two downsides:
-
-1. This doesn't work on other operating systems like macOS
-2. It allows any user in the system to run the program with that capability. In some setups, this could be problematic.
-
-
 See these two great blog posts for more details on Linux capabilities in this context.
 
 * [Sniffing with Wireshark as a Non-Root User](http://packetlife.net/blog/2010/mar/19/sniffing-wireshark-non-root-user/)
 * [File Capabilities in Linux](http://www.andy-pearce.com/blog/posts/2013/Mar/file-capabilities-in-linux/)
 
+# Future Investigation
 
-## Virtual Network Interfaces
+Being able to provide programs with access to raw sockets without providing full root access
+is key to being able to run programs like [Wireshark](https://www.wireshark.org/) safely on our computers.
 
-Another way to run this program without having to resort to using `root` is by creating a virtual
-network interface, the approach suggested by smoltcp. A virtual network interface is a pure-software
-construct in Linux that creates a network device that can accessed similarly to physical network
-devices. Importantly, traffic can be forwarded from the physical device to the virtual device
-and vice-versa. On top of that, virtual network devices can be granted to particular unix users
-on a server.
-
-The strategy then to allow a non-root unix user to open raw sockets on the machine is to create
-a virtual network device that is set up to forward traffic to/from the physical network device
-and granted to a particular non-root unix user. With that, this unix user will be able to open
-raw sockets on the virtual device, and therefore be able to read packets coming in/out of the
-physical device.
-
-Let's unpack the lines required to make this happen:
-
-```
-sudo ip tuntap add name tap0 mode tap user $USER
-```
-
-This command uses the `tuntap` command in the `ip` tool to create a
-a `tap` mode virtual interface. TAP mode interfaces operate 
-
-## Conclusion
+Hope you found this interesting/helpful! Next up I'll be covering the Linux `socket` API
+in more detail.
