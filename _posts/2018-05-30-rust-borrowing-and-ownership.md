@@ -352,6 +352,6 @@ Hopefully these examples help with your understanding of the borrow system
 in Rust. It definitely takes a lot of getting used to, and can be a struggle at
 first. But once you've gotten your head around it, the borrow system becomes
 an incredible safety net that prevents a lot of issues that are common
-in other systems programming languages, like C.
+in other systems programming languages.
 
 Happy Rusting!
