@@ -84,6 +84,7 @@ DEPENDENCIES
   jekyll (~> 3.8.1)
   jekyll-athena
   jekyll-feed (~> 0.6)
+  rouge
   s3_website
   tzinfo-data
 

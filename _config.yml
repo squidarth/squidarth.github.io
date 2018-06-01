@@ -21,12 +21,13 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://squidarth.com" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: sidpshanker
 github_username:  squidarth
-
+highlighter: rouge
 # Build settings
 markdown: kramdown
 theme: jekyll-athena
 plugins:
   - jekyll-feed
+  - rouge
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
