@@ -23,7 +23,10 @@ one of the values from `myvec`, and attempt to add it to `othervec` with `Vec::p
 // invalid
 
 fn main() {
-  let myvec: Vec<String> = vec![String::from("hello"), String::from("world")];
+  let myvec: Vec<String> = vec![
+    String::from("hello"),
+    String::from("world")
+  ];
   let mut othervec: Vec<String> = Vec::new();
 
   //  `myvec.get(1)` doesn't return a `String`, rather, it returns an `Option`,
@@ -52,14 +55,14 @@ The upshot of what is happening here is that `myvec.get(1)` didn't actually retu
 of type `String`, rather it returned a _reference_ to a `String`, or `&String`. References to strings
 can be used in readonly contexts, for instance, you can do:
 
-```
+```rust
 println!("{}", myvec.get(1).unwrap())
 ```
 
 However, since `othervec` is a `Vec` of type `Vec<String>`, you cannot push a value of
 type `&String` on it. That's fine, we can use the dereference character `*`, right?
 
-```
+```rust
 // invalid
 ...
 let myvec: Vec<String> = vec![String::from("hello"), String::from("world")];
@@ -118,7 +121,10 @@ value is `myvec`. If we were to do the following:
 
 ```rust
 // invalid
-let myvec: Vec<String> = vec![String::from("hello"), String::from("world")];
+let myvec: Vec<String> = vec![
+  String::from("hello"),
+  String::from("world")
+];
 let mut othervec: Vec<String> = Vec::new();
 let val = *myvec.get(1).unwrap();
 ```
@@ -133,10 +139,13 @@ to an invalid block of memory.
 
 Also, we'd be able to do scary stuff like:
 
-```
+```rust
 // invalid
 fn main() {
-  let myvec: Vec<String> = vec![String::from("hello"), String::from("world")];
+  let myvec: Vec<String> = vec![
+    String::from("hello"),
+    String::from("world")
+  ];
   let mut othervec: Vec<String> = Vec::new();
   othervec.push(myvec.get(1).unwrap());
   myvec.clear();
@@ -150,7 +159,10 @@ To fix this, we could assign the reference to `val`, like so:
 
 ```rust
 // invalid
-let myvec: Vec<String> = vec![String::from("hello"), String::from("world")];
+let myvec: Vec<String> = vec![
+  String::from("hello"),
+  String::from("world")
+];
 let mut othervec: Vec<String> = Vec::new();
 let val = myvec.get(1).unwrap();
 ```
@@ -167,7 +179,10 @@ be a vector of `&String`:
 ```rust
 // valid
 fn main() {
-  let myvec: Vec<String> = vec![String::from("hello"), String::from("world")];
+  let myvec: Vec<String> = vec![
+    String::from("hello"),
+    String::from("world")
+  ];
   let mut othervec: Vec<&String> = Vec::new();
   othervec.push(myvec.get(1).unwrap());
 }
@@ -183,7 +198,10 @@ we can copy the string:
 ```rust
 // valid
 fn main() {
-  let myvec: Vec<String> = vec![String::from("hello"), String::from("world")];
+  let myvec: Vec<String> = vec![
+    String::from("hello"),
+    String::from("world")
+  ];
   let mut othervec: Vec<String> = Vec::new();
   othervec.push(myvec.get(1).unwrap().to_string());
 }
