@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  "A Demonstration of  Borrowing and Ownership in Rust"
-date:   2018-05-30 12:00:38 -0400
+title:  "Fear not the Rust Borrow Checker"
+date:   2018-05-31 12:00:38 -0400
 categories: rc rust
 ---
 
@@ -10,7 +10,7 @@ and [borrowing](https://doc.rust-lang.org/book/second-edition/ch04-02-references
 
 In this post I'm going to demonstrate how these concepts work through some examples of code
 that break Rust's rules, and explain why they're problematic. I assume very little knowledge
-of the Rust programming language. I've added comments to all of the code blocks that indicate
+of the Rust programming language. I've also added comments to all of the code blocks that indicate
 whether the code is valid Rust or not.
 
 # Example 1: Appending values to a vector of strings
@@ -25,13 +25,14 @@ one of the values from `myvec`, and attempt to add it to `othervec` with `Vec::p
 fn main() {
   let myvec: Vec<String> = vec![String::from("hello"), String::from("world")];
   let mut othervec: Vec<String> = Vec::new();
+
+  //  `myvec.get(1)` doesn't return a `String`, rather, it returns an `Option`,
+  //  and therefore `.unwrap()` needs to be used to get the value out of it
   othervec.push(myvec.get(1).unwrap());
 }
 ```
 
-As a sidenote, I'll also point out that `myvec.get(1)` doesn't return a `String`, rather, it returns an `Option`, and therefore `unwrap` needs to be used to get the value out of it.
-
-Anyway, back to the substance of this code section. This seems like a totally reasonable
+This seems like a totally reasonable
 thing to do--in many other programming langauges, you can totally
 get a value from an array or list, and stick it in another data structure.
 
@@ -143,7 +144,7 @@ fn main() {
 ```
 
 Since `.clear()` deallocates all the memory, reads on `othervec` would result
-in invalid memory reads.
+in invalid memory reads after it is called.
 
 To fix this, we could assign the reference to `val`, like so:
 
@@ -191,6 +192,24 @@ fn main() {
 The `to_string()` method here on `&String` allocates a new `String`, and
 gives ownership to `othervec`.
 
+## Borrowing Summary
+
+This constraint that Rust has that requires that value cannot be assigned
+to more than one owner solves a big problem that happens in other programming
+languages, like C, in which invalid memory can continue to be read. The
+implications of solving that problem are pretty crazy too: another way
+of looking at this is that when we pull a value out of `myvec` with: `*myvec.get(1).unwrap()`,
+the resulting value _knows_ where it came from, and knows that because it has an
+owner, it cannot be assigned to another variable. In other programming languages,
+if you pull a variable out of a list-like object, like in the following Python:
+
+```python
+x = ["a", "b", "c"]
+y = x[1]
+```
+
+It is irrelevant where the value now stored in `y` came from, it can be treated like
+any other string. That's not the case in Rust!
 
 For more information on borrowing and ownership, check out these sections in the
 Rust book:
@@ -240,9 +259,8 @@ in `copy_to_new_vec`. `copy_to_new_vec` in turn returns back a reference to
 Alright, this seems reasonable, why is the compiler complaining to us?
 
 The catch with functions that return references to other objects is that
-if the objects that are being referenced go out of scope and are deallocated,
+if the objects that are being referenced go out of scope or are deallocated,
 then reading from our reference will result in invalid memory reads.
-
 
 ## Introducing "lifetime parameters"
 
