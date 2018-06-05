@@ -34,10 +34,10 @@ The first reason is to take advantage of systems with multiple processors. In or
 program needs to be written in units that can be run independently, and threads are
 a great way to accomplish this.
 
-But even if your system only has a single processor, there are still good reasons to
-use threads. For instance, if your program spends a lot of time waiting around, for example
-if it makes a lot of network connections, you might want to pause the thread that is waiting
-and switch to a thread that could do more work.
+Even if your system only has a single processor, there are still good reasons to
+use threads. If your program spends a lot of time waiting around, for instance,
+to make network requests, you might want to pause the thread that is waiting
+and switch to a thread that is ready to do work.
 
 ## Different Types of Threading
 
@@ -134,11 +134,11 @@ new threads get created, with the same parent process of
 
 ![rust_concurrency](/assets/rust-concurrency.gif)
 
-*Important*: Note that the the parent of the
+**Important**: Note that the the parent of the
 "Inner thread 2" is the main process, rather than
 "Inner thread 1". This is a very important detail,
 because it means that if Inner Thread 1 terminates,
-it does not necessarily kill Inner Thread 2. This is
+the OS _does not_  kill Inner Thread 2. This is
 not the case with the parent process, where if the parent
 process were to die, both Inner Threads 1 & 2 would be killed.
 
