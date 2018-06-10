@@ -76,7 +76,8 @@ we see:
 
 > In this example [where a thread is spawned], the spawned thread is "detached" from the current thread. This means that it can outlive its parent (the thread that spawned it), unless this parent is the main thread.
 
-Hm..ok so our understanding of the behavior is correct.
+Hm..ok so our understanding of the behavior is correct. However, there isn't
+a lot of detail as to why exactly this is the case.
 
 For the remainder of the post, I'll be focused on how this
 behavior is achieved.
@@ -87,7 +88,7 @@ In order to really understand what is happening here, we need to
 get a better handle on what is happening with our system when
 the `thread::spawn()` function call is run. Trying to read through
 this code will probably require a lot of time and sorting through
-the Rust standard library. But is there an easier way of figuring this out?
+the Rust standard library. Is there an easier way of figuring this out?
 
 Well, let's start with what we know. We know that `thread::spawn()`
 is creating a new OS thread that is managed by Linux. That means that there's
