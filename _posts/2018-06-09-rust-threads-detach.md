@@ -130,8 +130,8 @@ clone(child_stack=0x7fd7283feef0, flags=CLONE_VM|CLONE_FS|CLONE_FILES|CLONE_SIGH
 ...
 ```
 
-But, admidst all of those calls are two that pop up around when
-we print out "Inner Thread `" that seem relevant: `clone` and
+But amidst all of those calls are two that pop up around when
+we print out "Inner Thread 1" that seem relevant: `clone` and
 `futex`.
 
 However, there is only one call to each of those, despite the
