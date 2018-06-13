@@ -47,7 +47,7 @@ information stored in TCP and UDP headers:
 For instance, the destination port is stored in the TCP headers. This means that packets
 read from raw sockets don't have any notion of "port".
 
-To step back a little bit, an application using TCP or UDP must, when opening up a STREAM or DGRAM socket, must declare a port to receive data on.  When the application reads data from that
+To step back a little bit, an application using TCP or UDP must, when opening up a STREAM or DGRAM socket, declare a port to receive data on.  When the application reads data from that
 socket, they will only see data that was sent to that particular port.
 
 Now, with raw sockets, because network-level IP packets do not have a notion of "port", all
