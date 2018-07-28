@@ -22,7 +22,7 @@ another, and is the protocol I'll be focused on in this post. What distinguishes
 networking protocols is that it guarantees 100% transmission. This means that if you send
 100kb of data from one computer to another using TCP, all 100kb will make it to the other side.
 
-This property of TCP is very powerful and is the reason that many network applications we're
+This property of TCP is very powerful and is the reason that many network applications we
 use, such as the web and email are built on top of it.
 
 The way TCP is able to accomplish this goal of trasmitting all the information that is sent
