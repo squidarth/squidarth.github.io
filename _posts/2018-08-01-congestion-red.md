@@ -11,7 +11,7 @@ categories: rc programming networking
 In my [last](http://www.squidarth.com/rc/programming/networking/2018/07/18/intro-congestion.html) [couple](http://www.squidarth.com/rc/programming/networking/2018/08/01/congestion-cubic.html) posts on TCP congestion control, I discussed strategies that TCP senders
 can use to handle congestion and figure out the optimal rate at which to send packets.
 
-In this post, I'm going to change tacks and talk about strategies that *routers* can use
+In this post, I'm going to change it up and talk about strategies that *routers* can use
 to prevent congestion. Specifically, I'm going to focusing on an algorithm called Random Early
 Detection (RED).
 
@@ -20,26 +20,27 @@ As usual, I put together a [Jupyter notebook](http://squidarth.com/Link-level-Co
 # Recap: Congestion Control
 
 As I've mentioned in previous posts, congestion happens in computer networks when senders
-on a link send more information to the link than the link can handle. As senders on a particular
+on a link send more packets to the link than it can handle. As senders on a particular
 link send more packets to the link, if the link cannot accomodate the quantity of packets
 being sent, the router connected to that link will begin queueuing up those packets. If the
 queue on that router fills up, subsequent packets arriving at the router will get dropped.
 
-When this situation occurs, TCP senders all need to reduce the rate at which they send packets.
+When this situation occurs, TCP senders need to reduce the rate at which they send packets.
 There are two indicators that TCP senders have that congestion is happening:
 
 1. Packet drops
 2. Increased round trip times
 
 While senders could theoretically use both of these signals to control the rate at which they
-send packets, in reality, most TCP implementations, only use packet loss.
+send packets, in reality, many TCP implementations only use packet loss.
 
 ## Why might this be an issue?
 
 If TCP senders only react to packet loss, that means that if they are sending too many packets,
-they only find out once the queues at the routers they are sending packets too fill up. In cases
+they only find out once the queues at the routers fill up. In cases
 where there is a sizable queue, that queue will delay the time it takes for the sender to
-realize that congestion is happening and react. In the case of CUBIC, the sender will ramp
+realize that congestion is happening. In the case of [CUBIC](http://www.squidarth.com/rc/programming/networking/2018/08/01/congestion-cubic.html), the default congestion
+control algorithm on Linux, the sender will ramp
 up its window will grow its window really fast, fill up the queue buffer, see a bunch of
 packet loss, and then drop its window size very quickly.
 
@@ -56,7 +57,7 @@ It sounds like from this that the queues are masking congestion issues, and poss
 making the problems these links experience worse. So why not just make queue smaller?
 
 I think to understand this requires an understanding of why these queues exist in the first
-place. The reason we want routers to have queues is that traffic isn't consistent--it's possible
+place. The reason we want routers to have queues is because traffic isn't consistent--it's possible
 that in one minute there's a sudden burst of traffic because a bunch people decided to visit a
 website at exactly the same time. If links dropped packets immediately after the link capacity
 is full, they would have no resilience to bursts of traffic. Queues can serve as smoothing
@@ -74,8 +75,8 @@ queues, and also solve the congestion masking problem. This general approach of 
 how a queue handles filling up is called [Active Queue Management](https://en.wikipedia.org/wiki/Active_queue_managementa) (AQM).
 
 When I talk about how queues are "managed", I'm specifically referring to how they handle
-being too full. The traditional, intuitive approach to handling this is called drop tail.
-The way drop tail queues work is that they fill up until they hit capacity. Once they
+being too full. The traditional, intuitive approach to handling this is called droptail.
+The way droptail queues work is that they fill up until they hit capacity. Once they
 hit capacity, all subsequent attempts to add packets to the queue fail.
 
 However, queues don't *have* to wait until they are full to begin dropping packets.
@@ -119,7 +120,6 @@ fewer consecutive window size reductions.
 
 This is apparent in graphs of the link queue sizes in each of these scenarios:
 
-
 ![link_queue_size_droptail]({{ "/assets/link_queue_size_droptail.png" | absolute_url }})
 
 *Link queue size using droptail*
@@ -128,7 +128,7 @@ This is apparent in graphs of the link queue sizes in each of these scenarios:
 
 *Link queue size using RED*
 
-# Some Implementation Details [Optional]
+# Some Implementation Details
 
 I worked with a fellow [Recurser](https://recurse.com), Venkatesh Srinivas on actually writing
 an [implementation of RED](https://github.com/ravinet/mahimahi/pull/122) in a [network simulator](http://mahimahi.mit.edu/) I've been using for
@@ -142,8 +142,8 @@ average of the queue size, rather than the queue size in any given moment.
 Using a weighted average of the queue size makes the algorithm more resilient to a sudden
 burst of traffic. If a new flow randomly pops onto the network throws a bunch of packets
 onto the queue temporarily, that doesn't necessarily mean that congestion is happening.
-Since we really only care about increases in the size of the *standing queue*, we use a
-weighted average.
+We only want to increase the probability of a drop if a standing queue is building--meaning
+that the queue is high for a period of time.
 
 The way you compute the weighted average is as follows:
 
@@ -192,18 +192,20 @@ Here, `average_transmission_time` is the typical amount of time between packet e
 way, if packets don't arrive at the queue for a little while, that gets taken into account
 in the weighted average calculation.
 
-This problem & solution was laid out in the paper, but it was cool to have discovered this
+This problem and solution was laid out in the paper, but it was cool to have discovered this
 on our own.
 
 # Next up
 
-While RED in our examples performs much better than droptail, it has some weaknesses--for instance, getting RED working well requires tuning it
-properly. It has a handful of parameters, including the $$w_q$$ term that we discussed earlier,
+While RED in our examples performs much better than droptail, it does have some weaknesses--for instance, RED requires some tuning to
+work effectively. It has a handful of parameters, including the $$w_q$$ term that we discussed earlier,
 and there isn't a clear science for figuring out the right values for these parameters. There
-are other more modern AQM approaches that are more commonly used today, like [CoDel](https://en.wikipedia.org/wiki/CoDel).
+are other AQM approaches that are more commonly used today, like [CoDel](https://en.wikipedia.org/wiki/CoDel).
 
 In the next couple posts, I'm going to return to solving congestion at the sender level and
 discuss some of the work that I've been doing around using reinforcement learning to help
 senders find the right congestion window.
 
-Big thanks to Venkatesh Srinivas for the help implementing this!
+Thanks for reading!
+
+*Big thanks to Venkatesh Srinivas for the help implementing this, and for the introduction to [queueing theory](https://en.wikipedia.org/wiki/Queueing_theory)!*
