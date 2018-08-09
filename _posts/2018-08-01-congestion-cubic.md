@@ -6,7 +6,7 @@ authors: Sid Shanker
 categories: rc programming networking
 ---
 
-In my [last post](http://localhost:4000/rc/programming/networking/2018/07/18/intro-congestion.html), I introduce the problem of congestion control in computer networks, and one of the early solutions to it, [Tahoe](https://tools.ietf.org/html/rfc5681).
+In my [last post](http://squidarth.com/rc/programming/networking/2018/07/18/intro-congestion.html), I introduce the problem of congestion control in computer networks, and one of the early solutions to it, [Tahoe](https://tools.ietf.org/html/rfc5681).
 
 In this post, I'm going to cover a different and more modern approach, CUBIC, which is the default TCP in most Linux distributions today. If you're
 interested in the details of the experiments I ran, check out this [Jupyter notebook](http://squidarth.com/CUBIC-vs-TAHOE.html).
