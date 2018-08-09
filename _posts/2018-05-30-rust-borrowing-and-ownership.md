@@ -2,6 +2,7 @@
 layout: post
 title:  "Fear not the Rust Borrow Checker"
 date:   2018-05-31 12:00:38 -0400
+authors: Sid Shanker
 categories: rc rust
 ---
 

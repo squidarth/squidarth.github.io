@@ -1,4 +1,5 @@
 ---
+authors: Sid Shanker
 layout: default
 ---
 
@@ -6,7 +7,7 @@ layout: default
   <div class="clearfix header-text">
     <h1 class="h0 inline-block py-2 mt-4 header-title">{{ page.title }}</h1>
     <div class="clearfix mb-2 py-1">
-      <p class="h4 lh-condensed">Sid Shanker - <time datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">{{ page.date | date: "%b %-d, %Y" }}</time></p>
+      <p class="h4 lh-condensed">{{ page.authors }} - <time datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">{{ page.date | date: "%b %-d, %Y" }}</time></p>
       <div class="col-1 sm-width-full border-top-thick">
       </div>
     </div>

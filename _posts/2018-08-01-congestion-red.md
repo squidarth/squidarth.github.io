@@ -2,6 +2,7 @@
 layout: post
 title:  "Congestion Control III: RED"
 date:   2018-08-01 12:00:38 -0400
+authors: Sid Shanker
 categories: rc programming networking
 ---
 <script type="text/javascript" async

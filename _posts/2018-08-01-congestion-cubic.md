@@ -2,6 +2,7 @@
 layout: post
 title:  "Congestion Control II: CUBIC"
 date:   2018-08-01 12:00:38 -0400
+authors: Sid Shanker
 categories: rc programming networking
 ---
 

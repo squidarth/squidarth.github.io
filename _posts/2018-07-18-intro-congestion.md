@@ -2,6 +2,7 @@
 layout: post
 title:  "Intro to Congestion Control"
 date:   2018-07-18 12:00:38 -0400
+authors: Sid Shanker
 categories: rc programming networking
 ---
 

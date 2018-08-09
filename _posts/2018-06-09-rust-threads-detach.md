@@ -2,6 +2,7 @@
 layout: post
 title:  "Where do Rust threads come from?"
 date:   2018-06-09 09:00:38 -0400
+authors: Sid Shanker
 categories: rc rust concurrency
 ---
 
