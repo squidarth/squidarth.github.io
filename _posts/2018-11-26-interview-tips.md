@@ -26,9 +26,9 @@ if you can afford to. You’re going to have to take a lot
 of calls during the process, between chats with recruiters
 and technical phone screens, and subtracting the stress of
 having to hold a phone to your ear and accidentally muting yourself (happened to me a lot)
-will be super helpful
+will be super helpful.
 2. You will be asked to “Tell me about yourself” many times. It’s helpful
-to have a tight 90 second answer to this that you can tweak depending on the company that you are talking to
+to have a tight 90 second answer to this that you can tweak depending on the company that you are talking to.
 5. Read up as much as you can about companies before going
 into an interview, particularly before an onsite. Demonstrating
 knowledge about the company is really good signal about a
@@ -42,7 +42,7 @@ you’d want to work at the company or not.
 Think about what went well and what didn’t, and I'd recommend committing
 it to writing. Think of every interview as an opportunity to improve.
 7. Use [Leetcode](https://leetcode.com)! It's an amazing resource for
-both programming questions and [behavioral interview questions](https://leetcode.com/explore/interview/card/leapai/)
+both programming questions and [behavioral interview questions](https://leetcode.com/explore/interview/card/leapai/).
 
 # Standard Processes
 
