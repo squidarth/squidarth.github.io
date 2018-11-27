@@ -1,3 +1,7 @@
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
 .rc-scout {
   text-align: center;
   font-size: 1.3em;

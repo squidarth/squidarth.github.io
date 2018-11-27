@@ -29,7 +29,6 @@ having to hold a phone to your ear and accidentally muting yourself (happened to
 will be super helpful
 2. You will be asked to “Tell me about yourself” many times. It’s helpful
 to have a tight 90 second answer to this that you can tweak depending on the company that you are talking to
-3. Send thank yous! Your interviewers are taking precious time out of their day to interview you!
 5. Read up as much as you can about companies before going
 into an interview, particularly before an onsite. Demonstrating
 knowledge about the company is really good signal about a
