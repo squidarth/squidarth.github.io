@@ -7,8 +7,8 @@ categories: scala types
 ---
 
 I've been learning more about Scala's type system, and last week, I hit
-some of its limitations for the first time. In this post, I'll
-be covering an issue called type erasure. If you're interested in understanding how generic types in Scala work better, or about how to use reflection, keep reading!
+some of its limitations. In this post, I'll
+be covering an issue called **type erasure**. If you're interested in understanding generic types in Scala better, or about how to use reflection, keep reading!
 
 
 And if you're seeing a warning along the lines of:
@@ -348,14 +348,15 @@ Hope that this post helps you solve your problems with erased type!
 
 **More on Type Erasure**
 
-* https://medium.com/@sinisalouc/overcoming-type-erasure-in-scala-8f2422070d20
-* http://www.angelikalanger.com/GenericsFAQ/FAQSections/TechnicalDetails.html#FAQ001
+* [https://medium.com/@sinisalouc/overcoming-type-erasure-in-scala-8f2422070d20](https://medium.com/@sinisalouc/overcoming-type-erasure-in-scala-8f2422070d20)
+* [http://www.angelikalanger.com/GenericsFAQ/FAQSections/TechnicalDetails.html#FAQ001](http://www.angelikalanger.com/GenericsFAQ/FAQSections/TechnicalDetails.html#FAQ001)
 
 **TypeTag**
 
-* https://stackoverflow.com/questions/12218641/scala-what-is-a-typetag-and-how-do-i-use-it
+* [https://stackoverflow.com/questions/12218641/scala-what-is-a-typetag-and-how-do-i-use-it](https://stackoverflow.com/questions/12218641/scala-what-is-a-typetag-and-how-do-i-use-it)
+* [https://docs.scala-lang.org/overviews/reflection/overview.html](https://docs.scala-lang.org/overviews/reflection/overview.html)
 
 **The drawbacks of using runtime information in an unconstrained way**
 
-* https://failex.blogspot.com/2013/06/fake-theorems-for-free.html
-* https://typelevel.org/blog/2014/11/10/why_is_adt_pattern_matching_allowed.html
+* [https://failex.blogspot.com/2013/06/fake-theorems-for-free.html](https://failex.blogspot.com/2013/06/fake-theorems-for-free.html)
+* [https://typelevel.org/blog/2014/11/10/why_is_adt_pattern_matching_allowed.html](https://typelevel.org/blog/2014/11/10/why_is_adt_pattern_matching_allowed.html)
