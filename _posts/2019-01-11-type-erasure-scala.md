@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Type Erasure in Scala"
-date:   2019-01-11 00:00:38 -0400
+date:   2019-01-11 09:00:38 -0400
 authors: Sid Shanker
 categories: scala types
 ---
@@ -50,8 +50,7 @@ depending on the type.
 
 This seems reasonable--it's not crazy that Scala, when executing this
 pattern match, could run through each of the cases and for each of the
-cases check the type of the instance of `value`, which will definitely
-be known at runtime.
+cases check the type of the instance of `value`, which is known at runtime.
 
 And as you'd expect, this code prints out:
 
@@ -118,7 +117,7 @@ val seq : Seq = Seq(1,2,3)
 ```
 
 Because of the compile-time checks, we get nice, type-safe code. However,
-this problem with the "underlying" types getting erased, is that you
+the problem with the "underlying" types getting erased is that you
 can no longer do runtime checks on those types.
 
 For instance, if you were to try:
@@ -223,11 +222,7 @@ java.lang.ClassCastException: java.lang.String cannot be cast to java.lang.Integ
 # Can we solve this with reflection?
 
 Scala provides a [reflection](https://docs.scala-lang.org/overviews/reflection/overview.html) API that allows you to inspect the types of your
-instances at runtime. Let's explore the possibilities of the reflection
-API.
-
-It turns out that we can accomplish *some* of what we want with the
-reflection API.
+instances at runtime, that can be used to accomplish *some* of what we want.
 
 ## TypeTag
 
@@ -257,15 +252,15 @@ Alright, let's unpack what's happening here:
 `TypeTag`. This is an indicator to the compiler that the compiler should
 capture the type information about `T` when `processThing` is invoked.
 
-2. We now pattern match, instead of on `Thing` itself, but on the `typeOf[T]`.
+2. We now pattern match on the `typeOf[T]`, instead of on `Thing` itself
 
 
-This works correctly though, and now we can actually distinguish between
+This works correctly, and now we can actually distinguish between
 a `Thing` containing a `Seq[Int]`, and one containing a `Seq[String]`.
 
 ## What if we want to operate on the value in Thing?
 
-Alright, now remember the example where we actually do something with
+Now, remember the example where we actually do something with
 the `value` inside of `Thing`? Can we use reflection to do that too?
 
 Well, now that we have the ability to check the types of things, we can
@@ -282,7 +277,7 @@ def processThing[T : TypeTag](thing: Thing[T]) = {
 }
 ```
 
-Alright, so now, this code, with the additional guard, `typeOf[T] =:= typeOf[Seq[Int]]`, can now distinguish between a `Seq[Int]` and a `Seq[String]`. We finally have achieved the behavior that we want.
+This code, with the additional guard, `typeOf[T] =:= typeOf[Seq[Int]]`, can now distinguish between a `Seq[Int]` and a `Seq[String]`. We finally have achieved the behavior that we want.
 
 However, during compilation, we still see the original warning that we
 were getting:
@@ -302,19 +297,19 @@ Because of the way Scala type erasure works, this is the best we can do
 in this case. You probably want to add an `@unchecked` annotation here as
 well to suppress the warning:
 
-```
-case Thing(x: Int @unchecked) => ...
+```scala
+case Thing(x: Seq[Int] @unchecked) => ...
 ```
 
 ## Other options
 
-This is somewhat out of scope of the post, but it's worth noting that this
+It's worth noting that this
 is really only problem because the type `T` of `Thing[T]` in
 `processThing` is completely unconstrained. If you knew in advance what
 possible types you might stick into a `Thing`, you could develop a different
 type, with subtypes that you could match on instead:
 
-```
+```scala
 sealed trait ThingValue
 case class SeqIntThingValue(value: Seq[Int]) extends ThingValue
 case class SeqStringThingValue(value: Seq[String]) extends ThingValue
@@ -331,11 +326,18 @@ def processThing[T <: ThingValue](thing: Thing[T]) = {
 
 This seems like an annoying constraint, and given that in *general*, in
 Scala, you can pattern match on arbitrary types of values, it is fairly
-surprising. The reason type erasure is required in Scala is because
+surprising.
+
+The reason type erasure is required in Scala is because
 Scala is a JVM-based language and needs to interop with Java. Java in its
 early iterations did not actually have generics, and when generics were
 added, they were implemented with type erasure so that the bytecode would
 be interoperable with bytecode generated from older versions of Java.
+
+In order for that type information to be preserved in the bytecode,
+changes would have been needed to make to how JVM bytecode actually
+works. I've left some links at the bottom of this article that go
+into more detail.
 
 # Conclusion
 
