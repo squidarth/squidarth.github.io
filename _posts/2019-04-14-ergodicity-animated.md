@@ -99,6 +99,7 @@ function ensembleAveragingLoop() {
       }
     },
     xaxis: {
+      rangemode: "nonnegative",
       title: {
         text: "Iterations"
       }
@@ -197,6 +198,7 @@ function timeAveragingLoop() {
       }
     },
     xaxis: {
+      rangemode: "nonnegative",
       title: {
         text: "Iterations"
       }
