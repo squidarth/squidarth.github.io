@@ -36,7 +36,7 @@ all of their money.
     <button id="ensemble-averaging-play-reset">Play</button>
     <span>
       Iteration Count: <b><span id="ensemble-averaging-iteration-count">0</span></b>
-      Current Value: <b><span id="ensemble-averaging-current-value">100</span></b> 
+      Average Value: <b><span id="ensemble-averaging-current-value">100</span></b> 
     </span>
   </span>
   <div id="ensemble-averaging"></div>
@@ -65,13 +65,117 @@ all of their money.
 
 
 <script>
-// Time Averaging Stuff
-function timeAveragingLoop() {
+
+
+function ensembleAveragingLoop() {
+  var NUM_TURNS = 20;
+  var NUM_PLAYERS = 20;
   var layout = {
     yaxis: {
       rangemode: 'tozero'
     }
   };
+  function reset() {
+    iterationCount = 0;
+
+    currentValues = [];
+    traces = []
+    for (var i = 0;i < NUM_PLAYERS;i++) {
+      currentValues.push(100);
+      traces.push([100]);
+    }
+    playing = false;
+    redrawEnsemble(traces);
+    $("#ensemble-averaging-iteration-count").text(0);
+    $("#ensemble-averaging-current-value").text(100);
+  }
+
+  function redrawEnsemble(data) {
+    var traces = $.map(data, function(singlePlayer, idx) {
+      return {
+        y: singlePlayer,
+        name: "Player " + idx,
+        type: 'scatter'
+      }
+    });
+
+    Plotly.newPlot('ensemble-averaging', traces, layout);
+  }
+
+
+  function getIteration() {
+    var iterationCount = 0;
+
+    var iteration = function () {
+      if (iterationCount < NUM_TURNS) {
+        for (var i = 0; i< NUM_PLAYERS; i++) {
+          var roll = Math.random();
+          if (roll > 0.5) {
+            currentValues[i] = currentValues[i] * 1.55
+          } else {
+            currentValues[i] = currentValues[i] * 0.55
+          }
+
+          traces[i].push(currentValues[i]);
+        }
+
+        iterationCount += 1;
+
+        $("#ensemble-averaging-iteration-count").text(iterationCount);
+        $("#ensemble-averaging-current-value").text(average(currentValues).toFixed(2));
+
+        redrawEnsemble(traces);
+      }
+    }
+
+    return iteration
+  }
+  function average(values) {
+    var sum = 0;
+    for (var i = 0;i < values.length;i++) {
+      sum += values[i]
+    }
+    return sum/values.length;
+  }
+  var interval;
+
+  $("#ensemble-averaging-play-reset").on('click', function() {
+    if (playing) {
+      clearInterval(interval);
+      $("#ensemble-averaging-play-reset").text("Play");
+      reset();
+    } else {
+      $("#ensemble-averaging-play-reset").text("Reset");
+      interval = setInterval(getIteration(), 250);
+
+      playing = true;
+    }
+  });
+
+
+  reset();
+}
+
+ensembleAveragingLoop();
+// Time Averaging Stuff
+function timeAveragingLoop() {
+  var layout = {
+    yaxis: {
+      rangemode: 'tozero',
+      title: {
+        text: "Current Value"
+      }
+    },
+    xaxis: {
+      title: {
+        text: "Iterations"
+      }
+    }
+  };
+  var iterationCount;
+  var currentValue;
+  var chartValues;
+  var playing;
 
   function reset() {
     iterationCount = 0;
