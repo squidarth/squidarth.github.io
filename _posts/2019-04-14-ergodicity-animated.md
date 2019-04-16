@@ -11,10 +11,10 @@ categories: math
 
 
 Last year, I wrote a blog post explaining the
-concept of [Ergodicity](http://squidarth.com/math/2018/11/27/ergodicity.html). Here's a little animated demonstration that
-explains the difference between time and ensemble averaging.
+concept of [Ergodicity](http://squidarth.com/math/2018/11/27/ergodicity.html). I
+thought it would be helpful in understanding this to make some fun animations.
 
-**To recap:** we are playing a game where on each iteration, we flip a fair coin,
+**To recap:** we are playing a game where on each turn, we flip a fair coin,
 and if the coin lands heads, we win 55% of our bet, and if it lands tails,
 we lose 45% of our bet.
 
@@ -24,11 +24,17 @@ which makes sense, since the expected value of playing this game is positive.
 However, if any individual plays this game long enough, they will lose almost
 all of their money.
 
-<h1>Ensemble Averaging</h1>
+**A note on terminology:** When I refer to the "current value", I refer to the
+amount of money each player holds. For instance, at the start, the value is **100**,
+and after one iteration, if the coin lands head, the value will be **150**
+
+<h1>With a group</h1>
 <p>
-  In this example, when you click "Play", you will begin playing the game. Notice
-  that while at any given point in time, you might have made a lot of money, after
-  a long time, the "current value" you hold will go to 0.
+  In this example, we have 40 players play the game 20 times. Notice
+  that each time you run this, the average value for all the players at the end
+  will usually be above 100. Notice, however, that the way things tend to shake out, there
+  will be one or two players who make a huge amount of money and that most lose
+  almost everything.
 </p>
 
 <div>
@@ -47,7 +53,7 @@ all of their money.
 <p>
   In this example, when you click "Play", you will begin playing the game. Notice
   that while at any given point in time, you might have made a lot of money, after
-  a long time, the "current value" you hold will go to 0.
+  a long time, the "current value" you hold will eventually converge to 0.
 </p>
 
 <div>
@@ -61,20 +67,44 @@ all of their money.
   <div id="time-averaging"></div>
 </div>
 
-<h1>An explanation</h1>
+<h2>Conclusion</h2>
 
+It's pretty counterintuitive that playing a game like this, which each *turn* has a positive
+expected value, would in the long run eventually result in ruin. Hopefully these animations
+help show visually that very different outcomes occur in this game when a many people play
+the game a small number of times (*ensemble-averaging*) and when a single individual plays the game many times
+(*time-averaging*). Expected value is a nuanced concept!
+
+If you're curious to learn more, check out my
+[my original post](http://squidarth.com/math/2018/11/27/ergodicity.html) on the subject,
+where I try to explain it more rigorously.
+
+
+<h2>PS</h2>
+
+I made this using [plotly.js](https://plot.ly/javascript/), an awesome & simple charting library, and some very hacky Javascript.
+If you're interested in being able to configure more about these animations (say the number of iterations, or players), let me know!
 
 <script>
 
 
 function ensembleAveragingLoop() {
   var NUM_TURNS = 20;
-  var NUM_PLAYERS = 20;
+  var NUM_PLAYERS = 40;
   var layout = {
     yaxis: {
-      rangemode: 'tozero'
+      rangemode: 'tozero',
+      title: {
+        text: "Current Value"
+      }
+    },
+    xaxis: {
+      title: {
+        text: "Iterations"
+      }
     }
   };
+
   function reset() {
     iterationCount = 0;
 
