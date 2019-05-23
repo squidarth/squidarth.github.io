@@ -12,7 +12,7 @@ categories: math
 
 Last year, I wrote a blog post explaining the
 concept of [Ergodicity](http://squidarth.com/math/2018/11/27/ergodicity.html). I
-thought it would be helpful in understanding this to make some fun animations.
+thought it would be helpful in understanding this to make some animations!
 
 **To recap:** we are playing a game where on each turn, we flip a fair coin,
 and if the coin lands heads, we win 55% of our bet, and if it lands tails,
@@ -26,7 +26,7 @@ all of their money.
 
 **A note on terminology:** When I refer to the "current value", I refer to the
 amount of money each player holds. For instance, at the start, the value is **100**,
-and after one iteration, if the coin lands head, the value will be **150**
+and after one iteration, if the coin lands head, the value will be **155**.
 
 <h1>With a group</h1>
 <p>
@@ -41,7 +41,7 @@ and after one iteration, if the coin lands head, the value will be **150**
   <span>
     <button id="ensemble-averaging-play-reset">Play</button>
     <span>
-      Iteration Count: <b><span id="ensemble-averaging-iteration-count">0</span></b>
+      Iterations: <b><span id="ensemble-averaging-iteration-count">0</span></b>
       Average Value: <b><span id="ensemble-averaging-current-value">100</span></b> 
     </span>
   </span>
@@ -60,7 +60,7 @@ and after one iteration, if the coin lands head, the value will be **150**
   <span>
     <button id="time-averaging-play-reset">Play</button>
     <span>
-      Iteration Count: <b><span id="time-averaging-iteration-count">0</span></b>
+      Iterations: <b><span id="time-averaging-iteration-count">0</span></b>
       Current Value: <b><span id="time-averaging-current-value">100</span></b> 
     </span>
   </span>
@@ -69,7 +69,7 @@ and after one iteration, if the coin lands head, the value will be **150**
 
 <h2>Conclusion</h2>
 
-It's pretty counterintuitive that playing a game like this, which each *turn* has a positive
+It's pretty counterintuitive that playing a game like this, in which each *turn* has a positive
 expected value, would in the long run eventually result in ruin. Hopefully these animations
 help show visually that very different outcomes occur in this game when a many people play
 the game a small number of times (*ensemble-averaging*) and when a single individual plays the game many times
