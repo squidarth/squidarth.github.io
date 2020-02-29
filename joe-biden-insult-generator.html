@@ -1,0 +1,87 @@
+<html>
+  <head>
+<style>
+html {
+   font-family: Arial !important;
+}
+
+h1 {
+  text-align: center;
+    font-size: 6em;
+}
+
+.link {
+  text-align: center;
+    margin-top: 15px;
+}
+.main {
+  text-align: center;
+  font-size: 3em;
+}
+
+</style>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" ></script>
+  </head>
+  <h1>Joe Biden Insult Generator</h1>
+
+
+  <div class="main">
+    <p><B>You're nothing but a</b> <span class="insult">_</span></p>
+    <button class="generator">Generate</button>
+  </div>
+
+  <div class="link"><a href="https://secure.actblue.com/donate/bern-site?refcode=berniesanders-com-donate">Click here for more fun</a></div>
+  <script>
+
+    var adjectives = [
+      "ratsmugglin'",
+      "lollygagging",
+      "two-faced",
+      "beersniffin",
+      "doggone",
+      "lyin'",
+      "flute-stealin'",
+      "punch drunk",
+      "pigeon-livered",
+      "dogfaced",
+      "clean-living",
+      "monkeypunching"
+    ];
+
+    var nouns = [
+      "sonofagun",
+      "goofnoggler",
+      "jollocks",
+      "drate-poke",
+      "hedge-creeper",
+      "hornswoggler",
+      "flapdoodle",
+      "ponysoldier",
+      "ratbag",
+      "wagtail",
+      "whooperup",
+      "dew-beater",
+      "driggle-draggle",
+      "gnashgab",
+      "gobermouch",
+    ];
+
+    function getRandom(words) {
+      return words[Math.floor(Math.random() * words.length)];
+    }
+
+    function getInsult() {
+      return getRandom(adjectives) + " "  + getRandom(nouns);
+    }
+
+    $(".generator").on('click', function() { 
+      var insult = getInsult();
+      $(".insult").text(insult);
+    });
+
+
+
+  </script>
+</html>
+
