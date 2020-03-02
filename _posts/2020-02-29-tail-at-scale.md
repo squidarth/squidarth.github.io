@@ -10,7 +10,7 @@ categories: article systems
 </script>
 
 I recently read the paper the ["Tail at Scale"](https://cseweb.ucsd.edu/~gmporter/classes/fa17/cse124/post/schedule/p74-dean.pdf)
-from Google's Jeff Dean. It's super approachable, and a great introduction to how to
+from Google's Jeff Dean and Luiz André Barroso. It's super approachable, and a great introduction to how to
 think about latency is large, distributed web systems.
 
 ## The Problem
@@ -37,7 +37,7 @@ the chances of hitting a slow path on some system becomes very high.
 
 ### Variances in Latency
 
-Before diving into what solutions are possible for managing variances in latency, Dean spends some time discussing
+Before diving into what solutions are possible for managing variances in latency, Dean and Barroso spend some time discussing
 the right ways to think about latency, as well as the reasons why not all requests to a system take the same
 amount of time.
 
@@ -81,17 +81,17 @@ of hitting the p99 latency of any of those machines goes up, and that will slow 
 We know, however, that each machine is capable of performing at its p50 latency. So the question becomes, in a distributed
 system, how do we increase the chance of hitting the p50 latency of each machine in the path of a request?
 
-Dean proposes a number of solutions, and I detail a couple of the notable ones here.
+Dean and Barroso propose a number of solutions, and I detail a couple of the notable ones here.
 
 ### Hedged Requests
 
-The first option that Dean presents is having "Hedged Requests". The idea is fairly simple: let's say a request first hits machine A,
+The first option that the authors present is having "Hedged Requests". The idea is fairly simple: let's say a request first hits machine A,
 then B, then C. If A's request to B takes longer than some configured amount of time, simply fire off another request to B!
 
 The thinking here is that  if A's request to B is taking longer than some threshold, then we have likely hit the p99 or worse latency
 for that service. Between two requests, it's unlikely that they both hit a path with poor latency.
 
-One of the downsides with this that Dean notes is that this *will* result in some amount of "wasted" work. After all, the results from
+One of the downsides noted in the paper is that this *will* result in some amount of "wasted" work. After all, the results from
 either the original request or the new request will be thrown away. Some of this can be mitigated through sending a signal once a response
 comes back from either service to the other service indicating that it can cancel the request.
 
@@ -109,7 +109,7 @@ partition fits on a single machine. In this approach, if data in a particular pa
 some reason, and starts receiving more traffic than other partitions, traffic to that particular partition might
 see higher latencies than other partitions.
 
-To address this, Dean proposes "micro-partitions", in which partitions are sized so that they are much smaller than
+To address this, Dean and Barroso propose "micro-partitions", in which partitions are sized so that they are much smaller than
 what could be supported by a particular machine. These micro-partitions can then dynamically be moved around based
 on traffic patterns. Therefore, if a particular micro-partition started getting a lot of traffic, it could be moved
 to an instance with fewer other micro-partitions on it.
@@ -121,7 +121,7 @@ affect a particular machine for a period of time. For instance, if a single mach
 recurring job run it that consumed a lot of resources, it might process requests more slowly for potentially
 a few minutes.
 
-To address this, Dean proposes the idea of "latency-induced probabation" in which machines are taken out of
+To address this, the authors propose the idea of "latency-induced probabation" in which machines are taken out of
 a cluster and put in "probation" if, for multiple requests, they perform poorly. Once a machine is on "probation",
 it will no longer receive live requests. However, they will still receive shadow requests, which is real production
 traffic that is duplicated and sent to these instance, but for which the response from the instance on probabation
@@ -149,10 +149,10 @@ change might get made twice!
 Similarly, in the case of latency-induced probation, if "shadow requests" are made for "write"
 requests, they cannot be safely be made. These solutions don't work for write requests.
 
-However, Dean points out that that in most web systems, write requests make a relatively smaller
+However, the authors point out that that in most web systems, write requests make a relatively smaller
 fraction of all requests than read requests, and tend to be more tolerant to higher latency anyway.
 
 ## Conclusion
 
-Thes are only some of the solutions Dean proposes--he lists out a few more in the paper. If you're
+Thes are only some of the solutions Dean and Barroso propose--they list out a few more in the paper. If you're
 curious to learn more, I'd definitely recommend reading the paper--it's very accessible!
