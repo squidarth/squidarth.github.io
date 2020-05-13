@@ -6,7 +6,7 @@ authors: Sid Shanker
 categories: article networking
 ---
 
-Last week I read a [fantastic blog post](https://robertheaton.com/2020/04/27/how-does-a-tcp-reset-attack-work/) from [Robert Eaton](https://robertheaton.com/) about
+Last week I read a [fantastic blog post](https://robertheaton.com/2020/04/27/how-does-a-tcp-reset-attack-work/) from [Robert Heaton](https://robertheaton.com/) about
 TCP Reset attacks. I figured it would be a good exercise to try to get the author's attack code
 working on Linux! I learned a ton about TCP and how to debug computer networks in the process.
 In this post I give a high-level overview of what TCP Reset attacks are, and tell the story of
