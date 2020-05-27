@@ -6,7 +6,7 @@ authors: Sid Shanker
 categories: rc rust concurrency
 ---
 
-Last week, I wrote a [post](http://www.squidarth.com/rc/rust/2018/06/04/rust-concurrency.html) in which I discussed some of the things that I learned about Rust concurrency.
+Last week, I wrote a [post](/rc/rust/2018/06/04/rust-concurrency.html) in which I discussed some of the things that I learned about Rust concurrency.
 
 One of the things that I pointed out was that when you spawn a
 thread within another thread, they _both_ have the main process

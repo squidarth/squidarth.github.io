@@ -6,7 +6,7 @@ authors: Sid Shanker & Matt Lamm
 categories: rc programming networking machine-learning
 ---
 
-In this post, we’ll talk about how to frame [congestion control](http://www.squidarth.com/rc/programming/networking/2018/07/18/intro-congestion.html)
+In this post, we’ll talk about how to frame [congestion control](/rc/programming/networking/2018/07/18/intro-congestion.html)
 as a reinforcement learning problem. As a recap, congestion control in TCP is the problem of figuring out
 the correct size for the TCP  “congestion window”, which is the number of packets that a sender can have
 in flight without having received an acknowledgement. If the window is too small, the sender won’t be taking
@@ -202,7 +202,7 @@ also clear that we need to run this for a longer period of time.
 
 To learn more about congestion control, we'd recommend reading the previous posts on the topic:
 
-* [Intro to congestion control](http://www.squidarth.com/rc/programming/networking/2018/07/18/intro-congestion.html )
+* [Intro to congestion control](/rc/programming/networking/2018/07/18/intro-congestion.html )
 * [The CUBIC strategy](/rc/programming/networking/2018/08/01/congestion-cubic.html)
 
 For resources on reinforcement learning, we'd recommend:

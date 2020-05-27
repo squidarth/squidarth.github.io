@@ -7,7 +7,7 @@ categories: rc rust
 ---
 
 Last week, I started learning Rust, and published a
-[post about the "ownership" system](http://www.squidarth.com/rc/rust/2018/05/31/rust-borrowing-and-ownership.html).
+[post about the "ownership" system](/rc/rust/2018/05/31/rust-borrowing-and-ownership.html).
 One of the places where Rust's ownership system really shines
 is in threading and concurrency. [Kevin](https://twitter.com/6b766e) and I decided to dig into
 this more on Friday, and did some work on [the dining philosophers problem](https://github.com/data-pup/dining-philosophers).
@@ -172,7 +172,7 @@ closure may outlive the current function, but it borrows `v`, which is owned by 
 ...
 ```
 
-Alright, that didn't work! Let's unpack the error a little bit. As I discuss in my [last blog post](http://www.squidarth.com/rc/rust/2018/05/31/rust-borrowing-and-ownership.html),
+Alright, that didn't work! Let's unpack the error a little bit. As I discuss in my [last blog post](/rc/rust/2018/05/31/rust-borrowing-and-ownership.html),
 in Rust, after variables go out of scope, the memory that is allocated to them is deallocated and
 returned to the operating system. So if the `v` in the enclosing scope goes out of scope, it will
 be deallocated. So, at the end of `main`, `v` would be deallocated. As discussed in the previous section,
