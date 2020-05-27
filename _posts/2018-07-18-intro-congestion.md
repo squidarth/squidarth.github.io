@@ -10,7 +10,7 @@ This summer, I've been working on coming up with better ways to solve network co
 on the internet. In this post, I'm going to talk about *why* congestion happens and some traditional solutions.
 
 If you're interested in a little bit more depth, this
-[Jupyter notebook](http://squidarth.com/demonstrating-congestion-control.html) contains the
+[Jupyter notebook](/demonstrating-congestion-control.html) contains the
 code that I used to get some of the results, along with further analysis of those results.
 
 # What is TCP?
@@ -30,7 +30,7 @@ The way TCP is able to accomplish this goal of trasmitting all the information t
 over the wire is that for every segment of data that is sent from party A to party B,
 party B sends an "acknowledgement" segment back to party A indicating that it got that message.
 
-![tcp_intro]({{ "/assets/intro_to_tcp.png" | absolute_url }})
+![tcp_intro]({{ "/assets/intro_to_tcp.png"  }})
 
 It's worth noting too that the protocol that TCP works on top of, IP,
 operates by transmitting packets with a maximum size of 1500 bytes. So if a sender needs to send 100kb,
@@ -49,7 +49,7 @@ connected to these links.
 
 This is a classic case:
 
-![congestion_intro]({{ "/assets/congestion_intro.png" | absolute_url }})
+![congestion_intro]({{ "/assets/congestion_intro.png"  }})
 
 In this picture, two senders are sending information over 1GB links, which
 both funnel into another 1GB link. The second link cannot accomodate all
@@ -83,7 +83,7 @@ when it hits its capacity
 Using the analogy of the link as a pipe, you can think of the *delay*
 as the length of the pipe, and the *bandwidth* as the circumference of the pipe.
 
-![link_intro]({{ "/assets/link_size.png" | absolute_url }})
+![link_intro]({{ "/assets/link_size.png"  }})
 
 An important statistic about a link is the bandwidth-delay product (BDP). This is
 a product of the bandwidth and the delay, and is the number of bytes that
@@ -196,10 +196,10 @@ considered "Fast Retransmit", because it doesn't wait for the timeout to happen.
 
 ### Some Thoughts
 
-In the [Jupyter notebook](http://squidarth.com/demonstrating-congestion-control.html) I talk about earlier,
+In the [Jupyter notebook](/demonstrating-congestion-control.html) I talk about earlier,
 I implemented Tahoe. Here's a graph of the congestion window over time:
 
-![tahoe_graph]({{ "/assets/tahoe_graph.png" | absolute_url }})
+![tahoe_graph]({{ "/assets/tahoe_graph.png"  }})
 
 Notice that it has a saw-tooth behavior. The intial spikiness is the slow-start phase,
 while the smoother parts correspond to congestion avoidance. The sharp drops back down to 1
@@ -253,7 +253,7 @@ A fascinating issue to consider with different congestion control schemes
 is whether or not certain schemes are "fair" to other TCP senders on the same
 link. A scheme would be unfair to other senders if during times of congestion
 it, rather than also scaled back, continued to send at the same rate. I include
-[here](http://squidarth.com/demonstrating-congestion-control.html#Low-Bandwidth,-1-Fixed-Window,-1-Tahoe)
+[here](/demonstrating-congestion-control.html#Low-Bandwidth,-1-Fixed-Window,-1-Tahoe)
 the results when a sender without congestion control is running on the same link
 as a sender using Tahoe. As you can see here, in a one minute period, the Tahoe
 sender barely gets any bytes through, because it doesn't get a chance to increase
@@ -273,7 +273,7 @@ is a fascinating exercise in distributed decision making with limited
 information.
 
 Again, if you're interested in seeing more details about the experiments
-I ran, check out my [Jupyter Notebook](http://squidarth.com/demonstrating-congestion-control.html).
+I ran, check out my [Jupyter Notebook](/demonstrating-congestion-control.html).
 
 Over the next few weeks, I'm going to be working on implementations of other
 congestion control algorithms, and hopefully make some progress on a machine learning-

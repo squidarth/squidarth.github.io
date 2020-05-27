@@ -13,10 +13,10 @@ in flight without having received an acknowledgement. If the window is too small
 full advantage of available bandwidth; if, on the other hand, the window is too big, packets will
 queue up at routers, causing per-packet round trip times to increase, and possibly packet loss.
 There exist several well-known algorithms for congestion control, notably,
-the [CUBIC](http://squidarth.com/rc/programming/networking/2018/08/01/congestion-cubic.html)
+the [CUBIC](/rc/programming/networking/2018/08/01/congestion-cubic.html)
 strategy is the default in Linux.
 
-![cubic_low_bdp]({{ "/assets/cubic_low_bdp.png" | absolute_url }})
+![cubic_low_bdp]({{ "/assets/cubic_low_bdp.png"  }})
 
 *Graph of the congestion window using the CUBIC strategy*
 
@@ -171,23 +171,23 @@ So, wthout further ado, the results:
 On the first episode of our training, we can see the congestion window
 moving around pretty randomly as the algorithm selects actions randomly:
 
-![cubic_low_bdp]({{ "/assets/episode_0_cwnd.png" | absolute_url }})
+![cubic_low_bdp]({{ "/assets/episode_0_cwnd.png"  }})
 
 By episode 100, we start to see behavior that looks more like the CUBIC graph,
 (see the graph above for the comparison) and performance that is far superior the original example.
 
-![cubic_low_bdp]({{ "/assets/episode_100_cwnd.png" | absolute_url }})
+![cubic_low_bdp]({{ "/assets/episode_100_cwnd.png"  }})
 
 By episode 265, the behavior starts looking pretty good!
 
-![cubic_low_bdp]({{ "/assets/episode_282_cwnd.png" | absolute_url }})
+![cubic_low_bdp]({{ "/assets/episode_282_cwnd.png"  }})
 
 Graphing the throughput over episodes, we see that even by episode 300,
 the line of best fit is still increasing, suggesting that convergence
 hasn't happened yet, and that with more training, we might see results
 more in line with or better than traditional algorithms.
 
-![cubic_low_bdp]({{ "/assets/abstract_pictures/throughput_over_episodes.png" | absolute_url }})
+![cubic_low_bdp]({{ "/assets/abstract_pictures/throughput_over_episodes.png"  }})
 
 # Conclusion
 
@@ -203,7 +203,7 @@ also clear that we need to run this for a longer period of time.
 To learn more about congestion control, we'd recommend reading the previous posts on the topic:
 
 * [Intro to congestion control](http://www.squidarth.com/rc/programming/networking/2018/07/18/intro-congestion.html )
-* [The CUBIC strategy](http://squidarth.com/rc/programming/networking/2018/08/01/congestion-cubic.html)
+* [The CUBIC strategy](/rc/programming/networking/2018/08/01/congestion-cubic.html)
 
 For resources on reinforcement learning, we'd recommend:
 

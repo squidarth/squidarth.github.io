@@ -6,10 +6,10 @@ authors: Sid Shanker
 categories: rc programming networking
 ---
 
-In my [last post](http://squidarth.com/rc/programming/networking/2018/07/18/intro-congestion.html), I introduce the problem of congestion control in computer networks, and one of the early solutions to it, [Tahoe](https://tools.ietf.org/html/rfc5681).
+In my [last post](/rc/programming/networking/2018/07/18/intro-congestion.html), I introduce the problem of congestion control in computer networks, and one of the early solutions to it, [Tahoe](https://tools.ietf.org/html/rfc5681).
 
 In this post, I'm going to cover a different and more modern approach, CUBIC, which is the default TCP in most Linux distributions today. If you're
-interested in the details of the experiments I ran, check out this [Jupyter notebook](http://squidarth.com/CUBIC-vs-TAHOE.html).
+interested in the details of the experiments I ran, check out this [Jupyter notebook](/CUBIC-vs-TAHOE.html).
 
 ## But first, a recap
 
@@ -17,7 +17,7 @@ Congestion on the internet happens when the computers send more packets to a par
 If a link is receiving more packets than can fit on the wire, it will begin queueing up those packets, and if the link's queues fill up,
 the link will begin dropping those packets.
 
-![congestion_intro]({{ "/assets/congestion_intro.png" | absolute_url }})
+![congestion_intro]({{ "/assets/congestion_intro.png"  }})
 
 ### Why can't senders just send packets at a rate the link can handle?
 
@@ -45,7 +45,7 @@ Once they experience drops, they will aggressively drop the window size, and the
 "slow start" mode again, where they increase exponentially until they hit the threshold. Once
 the threshold is hit, they will increase linearly again.
 
-![tahoe_graph]({{ "/assets/tahoe_graph.png" | absolute_url }})
+![tahoe_graph]({{ "/assets/tahoe_graph.png"  }})
 
 ## The internet's different now!
 
@@ -70,7 +70,7 @@ senders on the same network.
 It turns out that there's a mathematical function for growing the congestion window that
 satisfies both of these contraints, the cubic function:
 
-![cubic_function]({{ "/assets/cubic_function.png" | absolute_url }})
+![cubic_function]({{ "/assets/cubic_function.png"  }})
 
 Observe a very powerful property of a cubic function: that as `x` is lower, t function
 grows very quickly, and then slows down as it approaches a particular point (the inflection point), and then
@@ -100,12 +100,12 @@ to discover newly available bandwidth.
 
 ## Results
 
-Alright, so how does CUBIC do in practice? While the full results are [here](http://squidarth.com/CUBIC-vs-TAHOE.html), here are some highlights:
+Alright, so how does CUBIC do in practice? While the full results are [here](/CUBIC-vs-TAHOE.html), here are some highlights:
 
 On a 2.64mbps network with an 88ms delay, we see a pretty big increase over Tahoe. Here's a graph of
 the congestion window over time:
 
-![cubic_low_bdp]({{ "/assets/cubic_low_bdp.png" | absolute_url }})
+![cubic_low_bdp]({{ "/assets/cubic_low_bdp.png"  }})
 
 Notice that the graph of the congestion window behaves like a cubic function. While Tahoe
 sees a 10.42kbps throughput, CUBIC sees 14.56kbps.
@@ -116,7 +116,7 @@ Let's next look at how it does when run on the same link as Tahoe:
 
 On a low BDP network:
 
-![cubic_vs_tahoe_low_bdp]({{ "/assets/cubic_vs_tahoe_low_bdp.png" | absolute_url }})
+![cubic_vs_tahoe_low_bdp]({{ "/assets/cubic_vs_tahoe_low_bdp.png"  }})
 
 Here we see the Tahoe performance drop to 6.15kbps, and the CUBIC performance increase
 to 17.50kbps. It's interesting that CUBIC increases relative to how it performed by
@@ -124,7 +124,7 @@ itself!
 
 On a high BDP network:
 
-![cubic_vs_tahoe_high_bdp]({{ "/assets/cubic_vs_tahoe_high_bdp.png" | absolute_url }})
+![cubic_vs_tahoe_high_bdp]({{ "/assets/cubic_vs_tahoe_high_bdp.png"  }})
 
 Here, we see that Tahoe doesn't do very well, getting 6.63kbps, while CUBIC gets 37.7kbps!
 

@@ -34,12 +34,12 @@ The best way to understand this is to actually look at the TCP packets, using a 
 
 We start by using the `nc` program to start a TCP server and client:
 
-![nc-1]({{ "/assets/nc-1.png" | absolute_url }})
+![nc-1]({{ "/assets/nc-1.png"  }})
 
 We send the string "hello" from the client to the server. For this exchange we get the following packets (note that "hello" is 6
 bytes because of the newline character):
 
-![wireshark-tcp-intro]({{ "/assets/wireshark-tcp-intro.png" | absolute_url }})
+![wireshark-tcp-intro]({{ "/assets/wireshark-tcp-intro.png"  }})
 
 Another important aspect of the TCP protocol is that it supports having different flags on TCP packets,
 one of which is the "Reset" flag ("RST").
@@ -75,7 +75,7 @@ to defend against attackers "spoofing" packets or engaging in man-in-the-middle 
 The answer to this, upon further inspection, is that TCP header data, information like source ports and
 destinations, is available for all to see! See this wireshark view of data from a TLS connection:
 
-![wireshark-tcp-intro]({{ "/assets/tls-intro.png" | absolute_url }})
+![wireshark-tcp-intro]({{ "/assets/tls-intro.png"  }})
 
 What TLS actually encrypts and can verify the identity of is the *contents* of the TCP packets.
 Until you open the actual load of a packet sent via TLS, there is no way to verify that the sender
@@ -122,7 +122,7 @@ Changing this in the script immediately fixed the error.
 
 Alright, so now, with a netcat session open as follows:
 
-![nc-1]({{ "/assets/nc-1.png" | absolute_url }})
+![nc-1]({{ "/assets/nc-1.png"  }})
 
 In a separate window, I ran the attack script:
 
@@ -157,7 +157,7 @@ back!
 
 So I ran the sniffer script again, and the packet did show up in Wireshark!
 
-![rst-1]({{ "/assets/rst-1.png" | absolute_url }})
+![rst-1]({{ "/assets/rst-1.png"  }})
 
 So it does look like a packet is being sent, the sequence numbers seem to
 be correct, and the ports seem to be correct! So what's going on here?
@@ -170,7 +170,7 @@ what we see on the other TCP packets in that wireshark dump.
 The next thing I tried was changing the window size to match up with the
 other packets:
 
-![rst-2]({{ "/assets/rst-2.png" | absolute_url }})
+![rst-2]({{ "/assets/rst-2.png"  }})
 
 No cigar.
 
@@ -198,19 +198,19 @@ $  sudo netwox 40 -l 127.0.0.1 -m 127.0.0.1 -o 8000 -p 33760 -B -q 3545181336
 Where 33760 is the port number of the client, and 3545181336 was the correct sequence number.
 Lo and behold, it worked! The connection closed!
 
-![working]({{ "/assets/netwox-working.gif" | absolute_url }})
+![working]({{ "/assets/netwox-working.gif"  }})
 
 ### Spot the difference between these packets!
 
 Alright, so we have an example of the working packet, and an
 example of the "not working" packet. Let's see if you can spot the difference!
 
-![spot-the-diff]({{ "/assets/spot-the-diff.png" | absolute_url }})
+![spot-the-diff]({{ "/assets/spot-the-diff.png"  }})
 
 It's subtle. It turns out the ethernet destination address on the packets
 is different.
 
-![spot-the-diff-answer]({{ "/assets/spot-the-diff-answer.png" | absolute_url }})
+![spot-the-diff-answer]({{ "/assets/spot-the-diff-answer.png"  }})
 
 So, at this point, we know there's no difference between how MacOS and Linux
 handle the RST flag in TCP. However, `scapy` and `netwox` configure the packet

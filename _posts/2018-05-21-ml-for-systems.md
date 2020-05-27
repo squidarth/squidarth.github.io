@@ -38,7 +38,7 @@ nodes corresponds to some range of keys. B-Trees are configured to have a fixed 
 
 An example tree might look something like:
 
-![b-tree]({{ "/assets/b-tree.png" | absolute_url }})
+![b-tree]({{ "/assets/b-tree.png"  }})
 
 Inserting a value into a B-Tree is done by traversing the tree to find the leaf for the value, and adding the value to that leaf. If the leaf is "full", a new level
 will be added to the tree.

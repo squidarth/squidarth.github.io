@@ -9,14 +9,14 @@ categories: rc programming networking
   src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML">
 </script>
 
-In my [last](http://www.squidarth.com/rc/programming/networking/2018/07/18/intro-congestion.html) [couple](http://www.squidarth.com/rc/programming/networking/2018/08/01/congestion-cubic.html) posts on TCP congestion control, I discussed strategies that TCP senders
+In my [last](/rc/programming/networking/2018/07/18/intro-congestion.html) [couple](/rc/programming/networking/2018/08/01/congestion-cubic.html) posts on TCP congestion control, I discussed strategies that TCP senders
 can use to handle congestion and figure out the optimal rate at which to send packets.
 
 In this post, I'm going to change it up and talk about strategies that *routers* can use
 to prevent congestion. Specifically, I'm going to focusing on an algorithm called Random Early
 Detection (RED).
 
-As usual, I put together a [Jupyter notebook](http://squidarth.com/Link-level-Congestion-Control.html) documenting my results and explanations.
+As usual, I put together a [Jupyter notebook](/Link-level-Congestion-Control.html) documenting my results and explanations.
 
 # Recap: Congestion Control
 
@@ -40,12 +40,12 @@ send packets, in reality, many TCP implementations only use packet loss.
 If TCP senders only react to packet loss, that means that if they are sending too many packets,
 they only find out once the queues at the routers fill up. In cases
 where there is a sizable queue, that queue will delay the time it takes for the sender to
-realize that congestion is happening. In the case of [CUBIC](http://www.squidarth.com/rc/programming/networking/2018/08/01/congestion-cubic.html), the default congestion
+realize that congestion is happening. In the case of [CUBIC](/rc/programming/networking/2018/08/01/congestion-cubic.html), the default congestion
 control algorithm on Linux, the sender will ramp
 up its window will grow its window really fast, fill up the queue buffer, see a bunch of
 packet loss, and then drop its window size very quickly.
 
-![cubic_high_bdp]({{ "/assets/cubic_high_bdp.png" | absolute_url }})
+![cubic_high_bdp]({{ "/assets/cubic_high_bdp.png"  }})
 
 In this world, it becomes very hard for CUBIC to fully achieve its potential, because it gets
 signal about how much congestion is happening too late. It makes the link kinda like the
@@ -88,7 +88,7 @@ Random Early Detection (RED) is a queueing discipline that drops packets from th
 probabilistically, where that probability is proportional to how full the queue is. The more
 full the queue is, the higher the probability of a drop is.
 
-![red_gif]({{ "/assets/red_gif.gif" | absolute_url }})
+![red_gif]({{ "/assets/red_gif.gif"  }})
 
 Here we see that as the queue is emptier, packets don't get dropped, but as the queue gets more
 full, it begins to drop packets with more frequency.
@@ -107,11 +107,11 @@ In every scenario that I ran, RED performed better than droptail. While the diff
 more subtle on low BDP networks, there was a pretty dramatic improvement on high BDP networks.
 
 
-![cubic_high_bdp_droptail]({{ "/assets/cubic_high_bdp_droptail.png" | absolute_url }})
+![cubic_high_bdp_droptail]({{ "/assets/cubic_high_bdp_droptail.png"  }})
 
 *CUBIC running on a high BDP network with droptail*
 
-![cubic_high_bdp_red]({{ "/assets/cubic_high_bdp_red.png" | absolute_url }})
+![cubic_high_bdp_red]({{ "/assets/cubic_high_bdp_red.png" }})
 
 *CUBIC running on a high BDP network with RED*
 
@@ -121,11 +121,11 @@ fewer consecutive window size reductions.
 
 This is apparent in graphs of the link queue sizes in each of these scenarios:
 
-![link_queue_size_droptail]({{ "/assets/link_queue_size_droptail.png" | absolute_url }})
+![link_queue_size_droptail]({{ "/assets/link_queue_size_droptail.png"  }})
 
 *Link queue size using droptail*
 
-![link_queue_size_red]({{ "/assets/link_queue_size_red.png" | absolute_url }})
+![link_queue_size_red]({{ "/assets/link_queue_size_red.png"  }})
 
 *Link queue size using RED*
 
@@ -162,11 +162,11 @@ Alright, that all seems fine--but when we actually wrote up our implementation, 
 noticing some odd behavior. Notably, on some experiments, the congestion window would just
 collapse to nothing and never recover. We'd see graphs like this for the congestion window:
 
-![congestion_collapse]({{ "/assets/congestion_collapse.png" | absolute_url }})
+![congestion_collapse]({{ "/assets/congestion_collapse.png"  }})
 
 And the link queue size graph would look like:
 
-![congestion_link_queue]({{ "/assets/congestion_collapse_link_queue.png" | absolute_url }})
+![congestion_link_queue]({{ "/assets/congestion_collapse_link_queue.png" }})
 
 It took us a while to figure out what was going on here, but we ultimately figured out that
 there's a negative spiral that happens:

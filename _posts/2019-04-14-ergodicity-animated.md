@@ -11,7 +11,7 @@ categories: math
 
 
 Last year, I wrote a blog post explaining the
-concept of [Ergodicity](http://squidarth.com/math/2018/11/27/ergodicity.html). I
+concept of [Ergodicity](/math/2018/11/27/ergodicity.html). I
 thought it would be helpful in understanding this to make some animations!
 
 **To recap:** we are playing a game where on each turn, we flip a fair coin,
@@ -76,7 +76,7 @@ the game a small number of times (*ensemble-averaging*) and when a single indivi
 (*time-averaging*). Expected value is a nuanced concept!
 
 If you're curious to learn more, check out my
-[my original post](http://squidarth.com/math/2018/11/27/ergodicity.html) on the subject,
+[my original post](/math/2018/11/27/ergodicity.html) on the subject,
 where I try to explain it more rigorously.
 
 

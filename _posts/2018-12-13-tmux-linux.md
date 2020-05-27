@@ -35,7 +35,7 @@ bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel 'xclip -sel clip -i
 bind-key -T copy-mode-vi Enter send-keys -X copy-pipe 'xclip -sel clip -i' '\;'  send -X clear-selection
 ```
 
-![tmux_copy_pasta]({{ "/assets/tmux-copy-pasta.gif" | absolute_url }})
+![tmux_copy_pasta]({{ "/assets/tmux-copy-pasta.gif"  }})
 
 # Vim
 
@@ -51,7 +51,7 @@ out of the box. There are two main steps you need to take here:
     :echo has("clipboard")
     ```
 
-    ![has_clipboard]({{ "/assets/has_clipboard.gif" | absolute_url }})
+    ![has_clipboard]({{ "/assets/has_clipboard.gif"  }})
 
     If it says "1" (like mine does), it means you have it, otherwise
     you need to install a vim package that has it, like `vim-gnome`,

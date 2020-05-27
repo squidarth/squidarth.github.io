@@ -43,7 +43,7 @@ headers in your application.
 An important thing worth noting about this is that there is important security-related
 information stored in TCP and UDP headers:
 
-![TCP Packet Diagram]({{ "/assets/TCP_Protocol_Diagram.png" | absolute_url }})
+![TCP Packet Diagram]({{ "/assets/TCP_Protocol_Diagram.png"  }})
 
 For instance, the destination port is stored in the TCP headers. This means that packets
 read from raw sockets don't have any notion of "port".
