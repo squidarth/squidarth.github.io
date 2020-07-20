@@ -11,7 +11,7 @@ categories: math
 
 
 Last year, I wrote a blog post explaining the
-concept of [Ergodicity](/math/2018/11/27/ergodicity.html). I
+concept of [Ergodicity](/math/2018/11/28/ergodicity.html). I
 thought it would be helpful in understanding this to make some animations!
 
 **To recap:** we are playing a game where on each turn, we flip a fair coin,
