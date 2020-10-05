@@ -1,18 +1,20 @@
 ---
 layout: post
 title:  "Let's build a Scala mock library"
-date:   2020-09-06 12:00:38 -0400
+date:   2020-10-04 12:00:38 -0400
 authors: Sid Shanker
 categories: scala programming
 ---
 
-I've been using Scala and writing tests in it for a couple years now, and
-something that's been a mystery to me has been how Mock libraries work.  
+I've been writing tests in Scala for a couple years now, and
+something that's always been a mystery to me has been Mock libraries.  
 To make things a little less mysterious, I decided to take a stab at building
-one myself! This post will go over what I did, and what I learned. This was a great excuse to learn about the features that Scala offers for building DSLs.
+one myself! This post will go over what I did, and what I learned. This was a great excuse to learn about fancy advanced Scala features like macros and reflection.
 
-If you've ever been curious about how to write a DSL in Scala, or just generally
+If you've ever been curious about these features, or just generally
 are interested in understanding Scala better, this post is for you!
+
+If you want to skip ahead see the code I've written, check out my [Github repo](https://github.com/squidarth/scala-mocking-library).
 
 ## What's a Mock Library?
 
@@ -31,8 +33,8 @@ class Bar(foo: Foo) {
 ```
 
 In my tests, I want to make sure that `Bar` is behaving correctly.
-However, this hard to do, because if we're using a *real* `Foo` object,
-it will be a random number every time!
+However, this hard to do, because if we use a *real* `Foo` object,
+it will return a random number every time!
 
 Ideally, we could have some object that has the *same interface* as `Foo`, that
 instead of getting a random number, returns some dummy value. This would allow us
@@ -51,7 +53,7 @@ val bar = new Bar(new FakeFoo)
 This achieves what we want. However, this means that for any class that we'd want to
 have a "mock" for, we'd have to set up a manual class for it, similar to what we've done here. 
 
-Thankfully, Scala has a facility for automatically generating classes at compile-time, the [macro](https://docs.scala-lang.org/overviews/macros/overview.html). This is
+Thankfully, Scala has a facility for automatically generating classes at compile-time, [macros](https://docs.scala-lang.org/overviews/macros/overview.html). This is
 the mechanism used in the commonly used [ScalaMock](https://scalamock.org/) library, for instance!
 
 
@@ -61,8 +63,7 @@ Before we dive into the actual implementation of this mock library, let's first 
 on the interface that we want to implement.
 
 As might have been hinted in the previous section, we are going to be writing a macro
-that automatically generates a "Mock" class for a given class, and instantiates an
-object for it. For this, we'll use the same interface that [ScalaMock](https://scalamock.org/) uses:
+that instantiates a "Mock" object for a given class. For this, we'll use the same interface that [ScalaMock](https://scalamock.org/) uses:
 
 ```scala
 val fooMock = mock[Foo]
@@ -72,7 +73,7 @@ The expectation in this code is that calling `mock[Foo]` returns a mock object t
 the same interface as `Foo`.
 
 The next thing that we need is a way of specifying, as the author of a test, what we
-exactly we want the return values to be for the methods of `Foo`. For this, we need
+we want the return values to be for the methods of `Foo`. For this, we need
 to be able to specify for given a particular argument, what value ought to be returned.
 
 For this, we'll use the same interface that the [Mockito](https://github.com/mockito/mockito-scala) uses:
@@ -81,7 +82,7 @@ For this, we'll use the same interface that the [Mockito](https://github.com/moc
 when(fooMock.doFooStuff).thenReturn(5)
 ```
 
-Later in this post, I'll get into what alternatives to this might be.  
+There will be more discussion about this API later in this post.
 
 ## Creating the Mock Object
 
@@ -98,7 +99,7 @@ type.
 Macros then require an implementation be defined, which is a function that takes
 as arguments "Expression" types that correspond to the arguments of the macro, and
 returns an "Expression" type, that when evaluated corresponds to the return type
-of the macro. It's in this implementation function that you can inspect the arguments
+of the macro. These are "Expression" types, because macros run at compile-time, and the arguments to the macro *have not been evaluated yet*. It's in this implementation function that you can inspect the arguments
 to the macro, and programmatically define new types & classes. I'll make this clear with an example:
 
 ```scala
@@ -112,8 +113,7 @@ def exampleMacroImplementation(c: blackbox.Context)(x: c.Expr[Int]): c.Expr[Int]
 ```
 
 Note a couple things about this -- first, that `exampleMacroImplementation`, it takes
-a macro `Context` object. Here, we use a `blackbox` macro -- see [this page](https://docs.scala-lang.org/overviews/macros/blackbox-whitebox.html) for what this means. This
-is used to access syntax-related types like `Expr`. Also, that the arguments and
+a macro `Context` object. Here, we use a `blackbox` macro -- see [this page](https://docs.scala-lang.org/overviews/macros/blackbox-whitebox.html) for what this means. Also, that the arguments and
 return type are of type `Expr`, parameterized by the arguments and return type of
 `exampleMacro`.
 
@@ -230,17 +230,14 @@ In order to do this, we will be using [Reflection](https://docs.scala-lang.org/o
 ### Using Reflection
 
 [Reflection](https://docs.scala-lang.org/overviews/reflection/overview.html) is a
-feature that allows you to inspect the types of objects. So in the case
-of a function that takes in a generic type `T`, with reflection, you could inspect
-the type of that object. In addition to discovering the *type* of that object, you
+feature that allows you to inspect the types of objects -- both at compile-time and runtime. So in the case of a function that takes in an object with generic type `T`, with reflection, you could inspect
+the *actual* type of that object. So for instance, if it a particular invocation `T` is `Int`, you could discover that using reflection. In addition to
+discovering the *type* of that object, you
 can find out other information, like what the `members` (methods and fields) of
 an object are.
 
-Now, as mentioned before, macro-expansion happens at *compile-time*. Reflection  can be used to inspect types at runtime when it used outside of the
-context of macros, and at compile-time when used in the context of macros.
-
-The way reflection works is that for functions where you want to be able to
-inspect a particular type, you add an implicit parameter, called "evidence",
+The way reflection works is that for functions where you want to use reflection,
+you add an implicit parameter, called "evidence",
 that lets the compiler know you'd like to operate on a type:
 
 ```scala
@@ -249,7 +246,7 @@ import scala.reflect.runtime.universe._
 def f[T](v: T)(implicit ev: TypeTag[T]) = ev.toString
 ```
 
-If `f` is called with `5`, this will return `TypeTag[Int]`.
+If `f` is called with `5`, this will return the string "TypeTag[Int]".
 
 A syntactic short-hand for this is to use a "context-bound" on the type:
 
@@ -275,13 +272,13 @@ obtain the parameter lists and return types.
 ### Putting it all together
 
 With the basics of macros and reflection, we finally know enough now to put it all
-together and have a `mock[T]` macro that supplies dummy values for each of its
+together and write a `mock[T]` macro that supplies dummy values for each of its
 members.
 
 The approach we take here is to first, use reflection to obtain the `members` of the
-type `T` that we are mocking, and then using quasiquotes, to construct a new object
+type `T` that we are mocking, and then using quasiquotes, construct a new object
 of type `T`, with each member overridden. We will sort out what each overridden method
-ought to do after this:
+ought to do after this (this code is incomplete):
 
 ```scala
 def mock[T] : T = macro mockImpl[T]
@@ -315,7 +312,7 @@ def mockImpl[T: c.WeakTypeTag](c: blackbox.Context): c.Expr[T] = {
     }.toList
 
     /* This extra variable is required in order for quasiquotes to 
-     * interpret these as the correct types */
+     * interpret these as the correct types, see: https://docs.scala-lang.org/overviews/quasiquotes/syntax-summary.html  */
     var classBody = q"""
      ..${methodDefs}
     """
@@ -359,7 +356,7 @@ myMock.setMockValue(methodName = "fooify", argument = 3, returnValue = 5)
 ```
 
 We know that this kind of API is not possible here. And additionally, because
-we are very limited in what the API of this mock object can be, it's probable that
+we are limited in what the API of this mock object can be, it's probable that
 we don't want to store information about dummy values *on the mock itself*. We
 discussed earlier in the article that a common API used by other mocking libraries
 looks like this:
@@ -369,10 +366,10 @@ val myMock = mock[Foo]
 when(myMock.fooify(3)).thenReturn(10)
 ```
 
-Given that we can't mutate the state on the mock itself, how can we possibly achieve
+Given that we can't mutate the state on the mock itself, how can we achieve
 this API?
 
-The approach that libraries like `ScalaMock` take here is to have an object *external*
+The approach that libraries like `ScalaMock` take here is to have an object **external**
 to the mock object that can be used in tests that keeps track of the state of Mocks!
 
 In ScalaMock in particular, there is a class called `MockContext` that is used to
@@ -381,8 +378,8 @@ keep track of Mock state in tests. We will follow a similar approach here.
 The rough outline for how we will achieve this is:
 1. Require that any Scala codepath that wants to use this mock library must
 extend a trait, lets call it `Mocking` that has defined an implicit instance
-owi f `MockContext`.
-2. In `MockContext` itself, support adding "handlers" to the MockContext, each corresponding to *what* whould be returned for a *given mock* , when *some particular* argument is passed
+of `MockContext`.
+2. In `MockContext` itself, support adding "handlers" to the MockContext, each corresponding to *what* whould be returned for a *given mock* , when *some particular* argument is passed (this will be a list of tuples)
 3. In `MockContext`, the notion of a "currently being mocked" method is supported, the reason for this will be clear soon 
 3. We modify the `mock` macro to take an `implicit` `MockContext`, such that this
 gets passed into `mock` calls automatically.
@@ -390,7 +387,7 @@ gets passed into `mock` calls automatically.
 them to do a lookup in the `MockContext` object, to see if there is a dummy value
 configured for that particular call or not, and to return an exception otherwise. It should also then set itself "currently being mocked" method on the `MockContext`.
 
-Once `mock` and `MockContext` have been update, the next thing to do is implement 
+Once `mock` and `MockContext` have been updated to match this behavior, the next thing to do is implement 
 `when`. `when` has a very simple purpose--to execute *some function*, and catch
 the exception specified in step 4. It also needs to return some object with a
 `thenReturn` method on it, which will then make use of the "currently being mocked"
@@ -406,9 +403,15 @@ We'll start with the `MockContext` class:
 trait Mock[T]
 
 class MockContext {
-  /* Mutable list of values, for each of the mocks */
+  /* Mutable list of tuples, for each of the methods mocked.
+   * An entry in this Buffer looks like this:
+   * (mock: Mock[_], functionName: String, argument: Any, returnValue: Any)
+    */
   val handlers : Buffer[Any] = Buffer[Any]()
 
+  /* This is used to keep track of the current method
+   * that we are mocking, and contains the mock, function name,
+   * and argument */
   var currentMockMethod: (Mock[_], String, Any) = null 
 
   def appendHandler[Value](value: Value) = {
@@ -422,6 +425,9 @@ class MockContext {
     currentMockMethod = (mock, funcName, arg)
   }
 
+  /* Search through the existing handlers, and find one matching the given
+   * mock, function name, and argument
+   */
   def findMatchingHandler(mock: Mock[_], funcName: String, arg: Any): Option[Any] = {
     handlers.collect { handler =>
       handler match {
@@ -433,7 +439,7 @@ class MockContext {
 }
 ```
 
-As described, the main thing provided by this class is the `handlers` field, which
+As described, the main feature provided by this class is the `handlers` field, which
 stores a list of calls that we are mocking. Note that I also added a `Mock[T]` trait,
 that we'll be adding to the objects produced by `mock`, to allow these to be
 type-checked.
@@ -476,7 +482,7 @@ I skipped the parts of the code that were the same from the pervious example
 and query the `handlers` on the `MockContext` to get a value. If there's no
 value, we throw a `MockUndefinedException`.
 
-We then implement `when` and `thenReturn`:
+Next, we implement `when` and `thenReturn`:
 
 ```scala
 class Stubbing[T](implicit val mockContext: MockContext) {
@@ -530,55 +536,42 @@ object Main extends App with Mocking {
 }
 ```
 
-And there we have it! Our very own mock library!
-
-## Where would we add other features?
-
-You'll notice mock libraries are much more fully featured -- they support functions
-with variable number of arguments, specifying multiple different return values for
-a given function (return 1 the first time the function is called, 2 the second, and so on).
-
-To achieve both of these behaviors, we can modify the `MockContext` object and increase
-the complexity of the `handlers`. We can add additional state, and additional return
-values.
+And there we have it! Our very own mock library! Again, see the [Github Repo](https://github.com/squidarth/scala-mocking-library/blob/master/src/main/scala/Mock.scala) for
+how this all fits together.
 
 ## Is there a way of getting around using `Any`?
 
 One of the main things I thought about after finishing writing this was that it
-seems like a code smell to be using `Any` in the `MockContext` handlers. Of course,
-it's true that we need to have some data structure for holding generic mock argument
-and return values, and have no a priori knowledge of what those types might be.
+seems like a code smell to be using `Any` in the `MockContext` handlers. The main
+problem with this is that right now, we could intoduce a bug in the `mock` implementation, causing us to a handler for a method with the incorrect type, without
+there being a compile-time error. While this has implications
+for *developers* of the mock library, if you are not changing the mock library itself,
+there isn't really a risk of the use of `Any` causing a problem.
 
-I spent some time exploring possibilities here, including different data
+All that said, I spent some time exploring possibilities here, including different data
 structures, and the generic programming
 library [Shapeless](https://github.com/milessabin/shapeless). However, because
 the `MockContext` class doesn't have any context about what mocks might be created,
 and because this is only known at runtime, it looks like it might be tricky to
 constraint the types further.
 
-However, I cannot confirm that this cannot be done. The main reason to constrain
-these types further, is that right now, if there was a bug in the `mock` implementation,
-we could theoretically store a handler for a method with the incorrect type, without
-there being a compile-time error. The good news is that while this has implications
-for *developers* of the mock library, if you are not changing the mock library itself,
-there isn't really a risk of the use of `Any` causing a problem.
+However, I cannot confirm that this cannot be done. 
 
 ## Conclusion
 
-Building a mock library was a great exercise that taught me a lot about language
-features in Scala. It's an experience that forced me to think a lot more about how
+Building a mock library was a great exercise that taught me a lot about Scala. It's an experience that forced me to think a lot more about how
 Scala's type system works -- and I definitely feel like I understand the language
 much better as a result.
 
 My high-level takeaway is that it's valuable to take on projects that require you
-to use a language in a way that you don't normally -- in this case, my deeper
-understanding came from hitting up against constraints in the language.
+to use a language in a way that you don't normally. For this project, a lot of the
+insight I gained came from hitting up against constraints in the language.
 
 I hope if you've made it this far that you learned something new about Scala too!
 For more detail, check out my [full code](https://github.com/squidarth/scala-mocking-library) on Github, and
 as always, feel free to reach out if you have any questions!
 
-# References
+## References
 
 * [Github Repo for this project](https://github.com/squidarth/scala-mocking-library)
 * [ScalaMock](https://scalamock.org/)
