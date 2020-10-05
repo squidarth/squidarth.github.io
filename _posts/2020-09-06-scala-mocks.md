@@ -7,8 +7,7 @@ categories: scala programming
 ---
 
 I've been writing tests in Scala for a couple years now, and
-something that's always been a mystery to me has been Mock libraries.  
-To make things a little less mysterious, I decided to take a stab at building
+something that's always been a mystery to me has been Mock libraries. To make things a little less mysterious, I decided to take a stab at building
 one myself! This post will go over what I did, and what I learned. This was a great excuse to learn about fancy advanced Scala features like macros and reflection.
 
 If you've ever been curious about these features, or just generally
@@ -286,39 +285,38 @@ def mock[T] : T = macro mockImpl[T]
  * form of TypeTag that can be used to detect abstract & generic type params.
  */
 def mockImpl[T: c.WeakTypeTag](c: blackbox.Context): c.Expr[T] = {
-    val mockingType = weakTypeOf[T]
-    val methodDefs = mockingType.members.map { member => 
-      val method = member.asMethod
-      val returnType = method.returnType
-      /* It's required that param lists are a sequence of 
-       * ValDefs
-       */
-      val paramsString = method.paramLists.map { paramList => 
-        paramList.map {  symbol =>
-          q"""val ${symbol.name.toTermName}: ${symbol.typeSignature}"""
-        }
+  val mockingType = weakTypeOf[T]
+  val methodDefs = mockingType.members.map { member => 
+    val method = member.asMethod
+    val returnType = method.returnType
+    /* It's required that param lists are a sequence of 
+     * ValDefs
+     */
+    val paramsString = method.paramLists.map { paramList => 
+      paramList.map {  symbol =>
+        q"""val ${symbol.name.toTermName}: ${symbol.typeSignature}"""
       }
-      
-      val name = method.name
+    }
+    
+    val name = method.name
 
-      /* We will fill in these definitions, but need a mechanism for 
-       * storing the dummy values first.
-       */
-      q"""
-      override def ${name.toTermName}(...${paramsString}) : ${returnType} = {
-          ???
-      }
-      """ 
-    }.toList
+    /* We will fill in these definitions, but need a mechanism for 
+     * storing the dummy values first.
+     */
+    q"""
+    override def ${name.toTermName}(...${paramsString}) : ${returnType} = {
+        ???
+    }
+    """ 
+  }.toList
 
-    /* This extra variable is required in order for quasiquotes to 
-     * interpret these as the correct types, see: https://docs.scala-lang.org/overviews/quasiquotes/syntax-summary.html  */
-    var classBody = q"""
-     ..${methodDefs}
-    """
-    val result = q"""new ${mockingType.resultType} { ..$classBody}"""
-    c.Expr(result)
-
+  /* This extra variable is required in order for quasiquotes to 
+   * interpret these as the correct types, see: https://docs.scala-lang.org/overviews/quasiquotes/syntax-summary.html  */
+  var classBody = q"""
+   ..${methodDefs}
+  """
+  val result = q"""new ${mockingType.resultType} { ..$classBody}"""
+  c.Expr(result)
 }
 ```
 
@@ -452,28 +450,29 @@ Next, let's go through the changes that we need to make to the `mock[T]` macro:
 
 ```scala
 class MockUndefinedException(s:String) extends Exception(s)
+
 def mock[T](implicit mockContext: MockContext) : T with Mock[T] = macro mockImpl[T]
 def mockImpl[T: c.WeakTypeTag](c: blackbox.Context)(mockContext: c.Expr[MockContext]): c.Expr[T] = {
-    import c.universe._
+  import c.universe._
 
-      ...
-
-      val firstParamName = method.paramLists.headOption.flatMap(_.headOption).map { symbol => symbol.name}.get
-
-      q"""
-      override def ${name.toTermName}(...${paramsString}) : ${returnType} = {
-        ${mockContext}.setCurrentMockMethod(this, ${name.toString()}, ${firstParamName.toTermName})
-        val foundHandler = ${mockContext}.findMatchingHandler(this, ${name.toString()}, ${firstParamName.toTermName})
-        foundHandler match {
-          case Some(value) => value.asInstanceOf[${returnType}]
-          case None => throw new MockUndefinedException("no mock found")
-        }
-      }
-      """
-    }.toList
-    
     ...
-  }
+
+    val firstParamName = method.paramLists.headOption.flatMap(_.headOption).map { symbol => symbol.name}.get
+
+    q"""
+    override def ${name.toTermName}(...${paramsString}) : ${returnType} = {
+      ${mockContext}.setCurrentMockMethod(this, ${name.toString()}, ${firstParamName.toTermName})
+      val foundHandler = ${mockContext}.findMatchingHandler(this, ${name.toString()}, ${firstParamName.toTermName})
+      foundHandler match {
+        case Some(value) => value.asInstanceOf[${returnType}]
+        case None => throw new MockUndefinedException("no mock found")
+      }
+    }
+    """
+  }.toList
+  
+  ...
+}
 ```
 
 I skipped the parts of the code that were the same from the pervious example
