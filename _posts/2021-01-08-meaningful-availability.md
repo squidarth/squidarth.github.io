@@ -190,5 +190,5 @@ projects that they would not have otherwise.
 Overall, this was a really interesting paper to read. It definitely changed my perspective on how to
 measure availability. Both success rate (count-based), and MTTR/MTTF (time-based) metrics are imperfect
 and _can_ be biased, so it's important to think about what you really care to measure from the perspective
-of your application, which requires taking into account the application's behavior, client behavior during outages, and
+of your application. This requires taking into account the application's behavior, client behavior during outages, and
 other information about your particular application.
