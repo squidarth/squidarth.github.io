@@ -118,7 +118,7 @@ acknowledging the *human factors* that go into our work.
 I don't have enough context on the whole field of Software Engineering Reseach to judge
 whether this is totally fair or not -- I imagine that a lot of this work is probably happening!
 But I am convinced that more introspection about what studies are aiming to actually study
-is important! 
+is really important for them to be useful. 
 
 ## Conclusion
 
