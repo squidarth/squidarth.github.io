@@ -1,6 +1,6 @@
 # A new post
 
-Some text
+Some Text
 
 some more text
 
@@ -14,3 +14,10 @@ as
 dfa
 f
 asdfasdfasfdafafasfd
+
+
+# A further post
+
+Even more text
+
+ahahhahaha
