@@ -16,9 +16,9 @@ In this post, I'll cover how you can make a universal unmute button that works, 
 of what window you have focused at the time. Note that I use a Mac -- and have Zoom and Google Meet
 versions.
 
-The high-level approach is to write an [AppleScript](https://gist.github.com/squidarth/6d86589a0baa8bf6e688f68b100347e0), which has the power to auto-focus Zoom or an
-active Google Meet window, and trigger the mute state. Then, use the Keyboard Shortcuts
-functionality on your Mac to hook up a function key of your choosing to that AppleScript.
+The high-level approach is to write an [AppleScript](https://gist.github.com/squidarth/6d86589a0baa8bf6e688f68b100347e0), which will auto-focus Zoom or an
+active Google Meet window, and trigger a mute/unmute. Then, use the Keyboard Shortcuts
+functionality on your Mac to hook up a key of your choosing to that AppleScript.
 
 # Write an AppleScript
 
