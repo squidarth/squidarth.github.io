@@ -19,8 +19,8 @@ You can give it a shot yourself on this [page](https://app.baseten.co/apps/VBlnM
 
 As-is, Stable Diffusion can produce some pretty amazing results and is pretty fun to play with.
 However, the images that Stable Diffusion can produce are limited to the dataset is trained on.
-If you want it to produce images of your dog, it unfortunately has no way of doing that out of
-the box.
+If you want it to produce images of your dog, for instance, it unfortunately has no way of doing
+that out of the box.
 
 # Fine-tuning
 
@@ -67,7 +67,7 @@ name for myself ("Sid Shanker"), which resulted in me seeing results like this:
 Here, it doesn't look trained to me at all. After changing the prompt to being something
 more unusual ("squidarth", my Github handle), I started getting the results I wanted.
 
-The other big lever is using the right mix of images (> 20, different angles).
+The other big lever is using the right mix of images (> 20, different angles, high resolution).
 
 ## You have to know a little bit about what's going on
 
@@ -82,7 +82,7 @@ When I tried running "Sid with other person", I got this monstrosity:
 ![sid-pixar]({{ "/assets/sid-with-person.png"  }}){: width="400" }
 
 Huggingface has a [really good guide](https://huggingface.co/blog/dreambooth#tldr-recommended-settings) on how to configure the settings for your project,
-but interpreting these understands some amount of knowledge about Stable Diffusin (what's the text encoder? what's the unet?)
+but interpreting these understands some amount of knowledge about Stable Diffusion (what's the text encoder? what's the unet?)
 
 It's hard to get away from requiring that level of configurability, since you likely want different
 settings for training a style vs. training on a face.
